@@ -145,6 +145,43 @@ Users:
     ```
     no response body
     
+Schedule:
+  - GET /schedule/{id}?from=2019-11-15&to=2020-01-15 : Get true schedule of a group from {from} to {to}. Discount measured in persentages.
+    - response
+    ```json
+    [
+        {
+            "Date": "2019-11-17",
+            "StartTime: "12:15",
+            "Discount": "15"
+        },
+        {
+            "Date": "2020-01-05",
+            "StartTime: "14:15",
+            "Discount": "0"
+        }
+    ]
+    ```
+ - PUT /schedule/{id} : Update, Add or Delete a day of schedule (only changed days).
+   - request
+   ```json
+   [
+       {
+            "Date": "2019-11-17",
+            "StartTime: "12:15",
+            "Discount": "15",
+            "ToDelete: "true"
+       },
+       {
+            "Date": "2019-11-18",
+            "StartTime: "14:20",
+            "Discount": "20",
+            "ToDelete: "false"
+       }
+   ]
+   ```
+
+
 Attendance:
   - GET /attendance/{groupId}?from=2019-11-15&to=2020-01-15 : Get list of users of a group with their attendance from {from} to {to}
      - response
@@ -177,7 +214,7 @@ Attendance:
         }
      ]
      ```
-   - PUT /attendance/{groupId} : Add or Delete days of attendance of users in a group. UpdatedAttendance is only changed days (added or deleted).
+   - PUT /attendance/{groupId} : Add or Delete days of attendance of users in a group. UpdatedAttendance are only changed days (added or deleted).
      - request
      ```json
      [
