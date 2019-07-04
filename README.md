@@ -144,4 +144,56 @@ Users:
     }
     ```
     no response body
- 
+    
+Attendance:
+  - GET /attendance/{groupId}?from=2019-11-15&to=2020-01-15 : Get list of users of a group with their attendance from {from} to {to}
+     - response
+     ```json
+     [
+        {
+            "User": 
+            {
+                "guid": "3c1426aa-a74b-43c1-a970-a3d7749341a2",
+                "amount": 0,
+                "dept": 0,
+                "updatedAt": "2019-05-01T02:29:47.9645408+05:00",
+                "name": "Name",
+                "surname": "Surname",
+                "patronymic": "Patronymic",
+                "phoneNumber": "PhoneNumber",
+                "email": "Email"
+            },
+            "Attendance":
+            [
+                {
+                    "Date": "2019-05-01"
+                    "IsPaid": true
+                },
+                {
+                    "Date": "2019-05-04"
+                    "IsPaid": false
+                }
+            ]
+        }
+     ]
+     ```
+   - PUT /attendance/{groupId} : Add or Delete days of attendance of users in a group. UpdatedAttendance is only changed days (added or deleted).
+     - request
+     ```json
+     [
+        {
+            "UserId": "3c1426aa-a74b-43c1-a970-a3d7749341a2",
+            "UpdatedAttendance":
+            [
+                {
+                    "Date": "2019-05-01"
+                    "IsAttended": true
+                },
+                {
+                    "Date": "2019-05-04"
+                    "IsAttended": false
+                }
+            ]
+        }
+     ]
+     ```
