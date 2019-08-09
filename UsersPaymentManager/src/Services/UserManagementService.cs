@@ -14,6 +14,7 @@ namespace UsersPaymentManager.Services
     {
         Task<UserResponse> CreateUser(UserModel request);
         Task<UserResponse> GetUser(Guid userId);
+        Task<ICollection<UserResponse>> GetAllUsers();
         Task UpdateUser(Guid id, UserModel request);
         Task DeleteUser(Guid id);
 
@@ -27,7 +28,7 @@ namespace UsersPaymentManager.Services
     {
         private readonly DatabaseContext _db;
 
-        public UserManagementService(DatabaseContext db, IMapper mapper)
+        public UserManagementService(DatabaseContext db)
         {
             _db = db;
         }
@@ -35,10 +36,10 @@ namespace UsersPaymentManager.Services
 
         public async Task<UserResponse> CreateUser(UserModel request)
         {
-            var user = new User()
+            var user = new User
             {
                 Guid = Guid.NewGuid(),
-                Account = new Account()
+                Account = new Account
                 {
                     Amount = 0,
                     Dept = 0,
@@ -46,7 +47,7 @@ namespace UsersPaymentManager.Services
                 },
             };
 
-            ToUser(request, user);
+            request.ToUser(user);
 
             await _db.AddUser(user);
 
@@ -54,13 +55,15 @@ namespace UsersPaymentManager.Services
         }
 
         public async Task<UserResponse> GetUser(Guid userId) =>
-            ToUserResponse(await _db.GetUserAsync(userId));
+            (await _db.GetUserAsync(userId)).ToUserResponse();
 
+        public async Task<ICollection<UserResponse>> GetAllUsers()
+            => (await _db.GetUsersAsync()).Select(x => x.ToUserResponse()).ToList();
         public async Task UpdateUser(Guid id, UserModel request)
         {
             var user = await _db.GetUserAsync(id);
 
-            ToUser(request, user);
+            request.ToUser(user);
 
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
@@ -70,14 +73,14 @@ namespace UsersPaymentManager.Services
             await _db.DeleteUser(id);
 
         public async Task<ICollection<UserResponse>> GetUsers(Guid groupId) =>
-            (await _db.GetGroupAsync(groupId)).Users.Select(x => ToUserResponse(x.User)).ToList();
+            (await _db.GetGroupAsync(groupId)).Users.Select(x => x.User.ToUserResponse()).ToList();
 
         public async Task AssignUserToGroup(Guid userId, Guid groupId)
         {
             var group = await _db.GetGroupAsync(groupId);
             var user = await _db.GetUserAsync(userId);
 
-            var userGroup = new UserGroup()
+            var userGroup = new UserGroup
             {
                 UserId = user.Id,
                 GroupId = group.Id
@@ -105,32 +108,6 @@ namespace UsersPaymentManager.Services
 
             _db.UserGroups.Remove(userGroup);
             await _db.SaveChangesAsync();
-        }
-
-        private static UserResponse ToUserResponse(User source)
-        {
-            return new UserResponse()
-            {
-                Guid = source.Guid,
-                Name = source.Name,
-                Email = source.Email,
-                Surname = source.Surname,
-                Dept = source.Account.Dept,
-                Amount = source.Account.Amount,
-                Patronymic = source.Patronymic,
-                PhoneNumber = source.PhoneNumber,
-                UpdatedAt = source.Account.UpdatedAt,
-            };
-        }
-
-
-        private static void ToUser(UserModel source, User target)
-        {
-            target.Name = source.Name;
-            target.Email = source.Email;
-            target.Surname = source.Surname;
-            target.Patronymic = source.Patronymic;
-            target.PhoneNumber = source.PhoneNumber;
         }
     }
 }

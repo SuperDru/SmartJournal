@@ -14,7 +14,7 @@ namespace UsersPaymentManager.Services
     {
         Task<ICollection<TrueScheduleModel>> GetTrueSchedule(Guid id, DateTime startTime, DateTime endTime);
 
-        Task UpdateTrueSchedule(Guid id, ICollection<TrueScheduleModel> request);
+        Task UpdateTrueSchedule(Guid id, ICollection<TrueScheduleRequest> request);
     }
 
     public class ScheduleManagementService: IScheduleManagementService
@@ -29,13 +29,15 @@ namespace UsersPaymentManager.Services
 
         public async Task<ICollection<TrueScheduleModel>> GetTrueSchedule(Guid id, DateTime startTime, DateTime endTime)
         {
-            await BuildSchedule(id, endTime);
-
             var group = await _db.GetGroupAsync(id);
 
+            _db.TrueSchedule.AddRange(group.BuildSchedule(endTime));
+            
+            await _db.SaveChangesAsync();
+            
             return group.TrueSchedules
-                .Where(x => x.IsLesson && x.Date >= startTime && x.Date <= endTime)
-                .Select(x => new TrueScheduleModel()
+                .Where(x => x.Date >= startTime && x.Date <= endTime && x.Lesson)
+                .Select(x => new TrueScheduleModel
                 {
                     Date = x.Date,
                     Discount = x.Discount,
@@ -43,46 +45,48 @@ namespace UsersPaymentManager.Services
                 }).ToList();
         }
 
-        public async Task UpdateTrueSchedule(Guid id, ICollection<TrueScheduleModel> request)
+        public async Task UpdateTrueSchedule(Guid id, ICollection<TrueScheduleRequest> request)
         {
-            var newSchedule = request.OrderBy(x => x.Date);
-
-            var last = newSchedule.Last();
-
             var group = await _db.GetGroupAsync(id);
 
-            await BuildSchedule(id, last.Date);
-
-        }
-
-        public async Task BuildSchedule(Guid groupId, DateTime endTime)
-        {
-            var group = await _db.GetGroupAsync(groupId);
-
-            var weekSchedule = new Dictionary<DayOfWeek, string>();
-
-            for (var i = 0; i < 7; i++)
-                if (group.WeekSchedule.Days[i])
-                    weekSchedule[(DayOfWeek)((i + 1) % 7) ] = group.WeekSchedule.StartTimes[i];
-
-            var today = DateTime.Today;
-
-            var last = today.AddMonths(1) < endTime ? endTime : today.AddMonths(1);
-
-            group.TrueSchedules.RemoveAll(x => !x.IsFixed && x.Date >= today);
-
-            for (var cur = today; cur < last; cur = cur.AddDays(1))
-                if (weekSchedule.ContainsKey(cur.DayOfWeek))
-                    group.TrueSchedules.Add(new TrueSchedule()
+            var scheduleToAdd = new List<TrueSchedule>();
+            var scheduleToUpdate = new List<TrueSchedule>();
+            var scheduleToDelete = new List<TrueSchedule>();
+            
+            foreach (var day in request)
+            {
+                var trueSchedule = group.TrueSchedules.FirstOrDefault(x => x.Date == day.Date);
+                
+                if (trueSchedule == null)
+                    scheduleToAdd.Add(group.AddTrueSchedule(day.Date, day.StartTime, day.Discount, true));
+                else if (day.ToDelete)
+                {
+                    if (!trueSchedule.Fixed)
                     {
-                        Date = cur,
-                        Discount = 0,
-                        IsFixed = false,
-                        IsLesson = true,
-                        StartTime = weekSchedule[cur.DayOfWeek]
-                    });
+                        trueSchedule.Fixed = true;
+                        trueSchedule.Lesson = false;
 
-            _db.Groups.Update(group);
+                        scheduleToUpdate.Add(trueSchedule);
+                    }
+                    else
+                    {
+                        scheduleToDelete.Add(trueSchedule);
+                    }
+                }
+                else
+                {
+                    scheduleToUpdate.Add(trueSchedule);
+                    trueSchedule.Discount = day.Discount;
+                    trueSchedule.StartTime = day.StartTime;
+                    trueSchedule.Lesson = true;
+                    trueSchedule.Fixed = !group.IsDayOfWeekSchedule(trueSchedule.Date);
+                }
+            }
+            
+            _db.TrueSchedule.AddRange(scheduleToAdd);
+            _db.TrueSchedule.UpdateRange(scheduleToUpdate);
+            _db.TrueSchedule.RemoveRange(scheduleToDelete);
+            
             await _db.SaveChangesAsync();
         }
     }

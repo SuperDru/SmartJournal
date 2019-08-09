@@ -11,15 +11,14 @@ namespace UsersPaymentManager.Database.Entities
         public int GroupId { get; set; }
         [Column("date")]
         public DateTime Date { get; set; }
-        [Column("is_lesson")]
-        public bool IsLesson { get; set; }
         [Column("discount")]
         public int Discount { get; set; }
         [Column("start_time")]
         public string StartTime { get; set; }
-        [Column("is_fixed")]
-        public bool IsFixed { get; set; }
-
+        [Column("lesson")]
+        public bool Lesson { get; set; }
+        [Column("fixed")]
+        public bool Fixed { get; set; }
         public Group Group { get; set; }
     }
 }

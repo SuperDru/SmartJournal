@@ -24,14 +24,14 @@ namespace UsersPaymentManager
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((ctx, builder) =>
                 {
-                    if (ctx.HostingEnvironment.IsProduction())
-                    {
-                        Console.WriteLine("superdru production");
-                        builder.SetBasePath("/app");
+//                    if (ctx.HostingEnvironment.IsProduction())
+//                    {
+//                        Console.WriteLine("superdru production");
+//                        builder.SetBasePath("/app");
+//                        builder.AddJsonFile("appsettings.json");
+//                    }
+//                    else
                         builder.AddJsonFile("appsettings.json");
-                    }
-                    else
-                        builder.AddJsonFile("appsettings.Development.json");
                 })
                 .UseStartup<Startup>();
     }

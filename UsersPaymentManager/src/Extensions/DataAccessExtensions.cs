@@ -81,10 +81,10 @@ namespace UsersPaymentManager
 
         public static async Task DeleteUser(this DatabaseContext db, Guid id)
         {
-            await Check(db);
-
             db.Users.Remove(Users[id]);
             await db.SaveChangesAsync();
+            
+            await Check(db);
 
             Users.Remove(id, out _);
         }
@@ -92,9 +92,6 @@ namespace UsersPaymentManager
         public static async Task<User> GetUserAsync(this DatabaseContext db, Guid id)
         {
             await Check(db);
-
-            if (Users == null)
-                await LoadDataFromDatabase(db);
 
             return Users?[id];
         }

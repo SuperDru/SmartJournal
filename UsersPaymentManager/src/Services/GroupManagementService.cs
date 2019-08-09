@@ -36,7 +36,7 @@ namespace UsersPaymentManager.Services
             ToGroup(request, group);
 
             await _db.AddGroup(group);
-
+            
             return ToGroupResponse(group);
         }
 
@@ -44,9 +44,11 @@ namespace UsersPaymentManager.Services
         {
             var group = await _db.GetGroupAsync(id);
 
+            _db.TrueSchedule.RemoveRange(group.RemoveNotFixed());
+            
             ToGroup(request, group);
 
-            _db.Groups.Add(group);
+            _db.Groups.Update(group);
             await _db.SaveChangesAsync();
         }
 
@@ -59,9 +61,10 @@ namespace UsersPaymentManager.Services
         public async Task<ICollection<GroupResponse>> GetGroups() =>
             (await _db.GetGroupsAsync()).Select(ToGroupResponse).ToList();
 
+        
         private static GroupResponse ToGroupResponse(Group source)
         {
-            return new GroupResponse()
+            return new GroupResponse
             {
                 Name = source.Name,
                 Cost = source.Cost,
@@ -72,7 +75,6 @@ namespace UsersPaymentManager.Services
             };
         }
 
-
         private static void ToGroup(GroupModel source, Group target)
         {
             target.Name = source.Name;
@@ -82,9 +84,9 @@ namespace UsersPaymentManager.Services
             {
                 Days = source.Days,
                 Duration = source.Duration,
-                StartTimes = source.StartTimes
+                StartTimes = source.StartTimes,
+                GroupId = target.Id
             };
-
         }
     }
 }

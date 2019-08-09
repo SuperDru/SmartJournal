@@ -17,5 +17,11 @@ namespace UsersPaymentManager.Database.Entities
         public int Duration { get; set; }
 
         public Group Group { get; set; }
+
+
+        public bool IsDayOfWeek(DayOfWeek dayOfWeek)
+        {
+            return Days[((int) dayOfWeek + 6) % 7];
+        }
     }
 }

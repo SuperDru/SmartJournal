@@ -17,6 +17,8 @@ namespace UsersPaymentManager.Database.Entities
         public float PaymentAmount { get; set; }
         [Column("dept")]
         public bool Dept { get; set; }
+        [Column("after_payment")]
+        public Guid AfterPayment { get; set; }
 
         public User User { get; set; }
         public Group Group { get; set; }

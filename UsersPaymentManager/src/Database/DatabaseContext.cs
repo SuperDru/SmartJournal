@@ -10,6 +10,9 @@ namespace UsersPaymentManager.Database
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
+        public DbSet<TrueSchedule> TrueSchedule { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -76,17 +79,6 @@ namespace UsersPaymentManager.Database
             builder.Entity<UserGroup>().HasKey(ug => new {ug.GroupId, ug.UserId});
             builder.Entity<UserRole>().HasKey(ur => new {ur.RoleId, ur.UserId});
             builder.Entity<WeekSchedule>().HasKey(w => w.GroupId);
-
-            Init(builder);
-        }
-
-
-        private static void Init(ModelBuilder builder)
-        {
-            //builder.Entity<User>().Init();
-            //builder.Entity<Group>().Init();
-            //builder.Entity<UserGroup>().Init();
-            //builder.InitAccountsAndPayments();
         }
     }
 }

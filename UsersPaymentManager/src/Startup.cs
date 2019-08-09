@@ -1,20 +1,12 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using UsersPaymentManager.Database;
-using UsersPaymentManager.Database.Entities;
-using UsersPaymentManager.Models;
 using UsersPaymentManager.Services;
 
 namespace UsersPaymentManager
@@ -27,23 +19,9 @@ namespace UsersPaymentManager
         }
 
         public static IConfiguration Configuration { get; set; }
-        public static IServiceProvider Services { get; set; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("OriginCors",
-                    builder =>
-                    {
-                        builder
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowAnyOrigin()
-                            .AllowCredentials();
-                    });
-            });
-
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
             services.AddMvc()
@@ -52,26 +30,17 @@ namespace UsersPaymentManager
                 )
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            //services.AddScoped<IUserService, UserService>();
-            //services.AddScoped<ILoginService, LoginService>();
-            //services.AddScoped<IAccountService, AccountService>();
-            //services.AddScoped<IGroupService, GroupService>();
-
             services.AddScoped<IGroupManagementService, GroupManagementService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IScheduleManagementService, ScheduleManagementService>();
-
-            //services.AddScoped<IDatabaseUpdateService, DatabaseUpdateService>();
-            //services.AddHostedService<SchedulingDatabaseUpdateService>();
-
-            ConfigureAutoMapper(services);
+            services.AddScoped<IAccountManagementService, AccountManagementService>();
+            services.AddScoped<IAttendanceManagementService, AttendanceManagementService>();
+            
             ConfigureDatabase(services);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider provider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            Services = provider;
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -82,25 +51,11 @@ namespace UsersPaymentManager
                 app.UseHsts();
             }
 
-            app.UseCors("OriginCors");
-            //app.UseHttpsRedirection();
+            app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseStaticFiles();
             app.UseAuthentication();
 
             app.UseMvc();
-        }
-
-        private static void ConfigureAutoMapper(IServiceCollection services)
-        {
-            var mapper = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<GroupModel, Group>();
-                cfg.CreateMap<Group, GroupModel>();
-                cfg.CreateMap<Group, GroupResponse>();
-
-            }).CreateMapper();
-
-            services.AddSingleton(mapper);
         }
 
         private static void ConfigureDatabase(IServiceCollection services)

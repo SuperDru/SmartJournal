@@ -1,48 +1,28 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UsersPaymentManager.Models;
+using UsersPaymentManager.Services;
 
 namespace UsersPaymentManager.Controllers
 {
-    [Route("/schedule")]
+    [Route("/schedule/{id}")]
     public class ScheduleController: Controller
     {
-        
-//        [HttpGet("all/week")]
-//        public async Task<List<GroupsScheduleResponse>> GetGroupsWeekSchedule()
-//        {
-//            
-//        }
-//        
-//        [HttpGet("all/month")]
-//        public async Task<List<GroupsScheduleResponse>> GetGroupsMonthSchedule()
-//        {
-//            
-//        }
-//        
-//        [HttpGet("{name}/week")]
-//        public async Task<List<int>> GetGroupWeekSchedule([FromRoute] string name)
-//        {
-//            
-//        }
-//        
-//        [HttpGet("{name}/month")]
-//        public async Task<List<int>> GetGroupMonthSchedule([FromRoute] string name)
-//        {
-//            
-//        }
-//        
-//        [HttpPost("{name}/week")]
-//        public async Task ChangeGroupWeekSchedule([FromRoute] string name, [FromBody] List<int> days)
-//        {
-//            
-//        }
-//        
-//        [HttpPost("{name}/month")]
-//        public async Task ChangeGroupMonthSchedule([FromRoute] string name, [FromBody] List<int> days)
-//        {
-//            
-//        }
+        private readonly IScheduleManagementService _scheduleService;
+
+        public ScheduleController(IScheduleManagementService scheduleService)
+        {
+            _scheduleService = scheduleService;
+        }
+
+        [HttpGet]
+        public async Task<ICollection<TrueScheduleModel>> GetSchedule([FromRoute] Guid id, [FromQuery] DateTime from, [FromQuery] DateTime to) =>
+            await _scheduleService.GetTrueSchedule(id, from, to);
+
+        [HttpPut]
+        public async Task UpdateSchedule([FromRoute] Guid id, [FromBody] ICollection<TrueScheduleRequest> request) =>
+            await _scheduleService.UpdateTrueSchedule(id, request);
     }
 }

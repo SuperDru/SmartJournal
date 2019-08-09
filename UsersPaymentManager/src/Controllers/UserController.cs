@@ -26,6 +26,10 @@ namespace UsersPaymentManager.Controllers
         public async Task<UserResponse> GetUser([FromRoute] Guid id) =>
             await _service.GetUser(id);
 
+        [HttpGet]
+        public async Task<ICollection<UserResponse>> GetUsers() =>
+            await _service.GetAllUsers();
+
         [HttpPost]
         public async Task<UserResponse> CreateUser([FromBody] UserModel request) =>
             await _service.CreateUser(request);

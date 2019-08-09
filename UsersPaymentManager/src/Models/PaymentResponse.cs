@@ -2,9 +2,8 @@ using System;
 
 namespace UsersPaymentManager.Models
 {
-    public class PaymentResponse
+    public class PaymentResponse: PaymentModel
     {
-        public float Amount { get; set; }
-        public DateTime Payday { get; set; }
+        public Guid Id { get; set; }
     }
 }

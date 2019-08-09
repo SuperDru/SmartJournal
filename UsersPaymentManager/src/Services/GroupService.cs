@@ -19,14 +19,14 @@ namespace UsersPaymentManager.Services
     public class GroupService: IGroupService
     {
         private readonly DatabaseContext _db;
-        private readonly IAccountService _accountService;
+        private readonly IAccountManagementService _accountManagementService;
         private readonly IMapper _mapper;
 
 
-        public GroupService(DatabaseContext db, IAccountService accountService, IMapper mapper)
+        public GroupService(DatabaseContext db, IAccountManagementService accountManagementService, IMapper mapper)
         {
             _db = db;
-            _accountService = accountService;
+            _accountManagementService = accountManagementService;
             _mapper = mapper;
         }
 

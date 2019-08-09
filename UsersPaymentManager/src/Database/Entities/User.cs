@@ -32,5 +32,22 @@ namespace UsersPaymentManager.Database.Entities
         public List<UserRole> Roles { get; set; }
         public List<Attendance> Attendance { get; set; }
         public List<Payment> Payments { get; set; }
+        
+        
+        public Attendance AddAttendance(int groupId, DateTime date)
+        {
+            var a = new Attendance
+            {
+                Date = date,
+                UserId = Id,
+                GroupId = groupId,
+                Dept = false,
+                PaymentAmount = 0
+            };
+            
+            Attendance.Add(a);
+
+            return a;
+        }
     }
 }
