@@ -144,4 +144,93 @@ Users:
     }
     ```
     no response body
- 
+    
+Schedule:
+  - GET /schedule/{id}?from=2019-11-15&to=2020-01-15 : Get true schedule of a group from {from} to {to}. Discount measured in persentages.
+    - response
+    ```json
+    [
+        {
+            "Date": "2019-11-17",
+            "StartTime: "12:15",
+            "Discount": "15"
+        },
+        {
+            "Date": "2020-01-05",
+            "StartTime: "14:15",
+            "Discount": "0"
+        }
+    ]
+    ```
+ - PUT /schedule/{id} : Update, Add or Delete a day of schedule (only changed days).
+   - request
+   ```json
+   [
+       {
+            "Date": "2019-11-17",
+            "StartTime: "12:15",
+            "Discount": "15",
+            "ToDelete: "true"
+       },
+       {
+            "Date": "2019-11-18",
+            "StartTime: "14:20",
+            "Discount": "20",
+            "ToDelete: "false"
+       }
+   ]
+   ```
+
+
+Attendance:
+  - GET /attendance/{groupId}?from=2019-11-15&to=2020-01-15 : Get list of users of a group with their attendance from {from} to {to}
+     - response
+     ```json
+     [
+        {
+            "User": 
+            {
+                "guid": "3c1426aa-a74b-43c1-a970-a3d7749341a2",
+                "amount": 0,
+                "dept": 0,
+                "updatedAt": "2019-05-01T02:29:47.9645408+05:00",
+                "name": "Name",
+                "surname": "Surname",
+                "patronymic": "Patronymic",
+                "phoneNumber": "PhoneNumber",
+                "email": "Email"
+            },
+            "Attendance":
+            [
+                {
+                    "Date": "2019-05-01"
+                    "IsPaid": true
+                },
+                {
+                    "Date": "2019-05-04"
+                    "IsPaid": false
+                }
+            ]
+        }
+     ]
+     ```
+   - PUT /attendance/{groupId} : Add or Delete days of attendance of users in a group. UpdatedAttendance are only changed days (added or deleted).
+     - request
+     ```json
+     [
+        {
+            "UserId": "3c1426aa-a74b-43c1-a970-a3d7749341a2",
+            "UpdatedAttendance":
+            [
+                {
+                    "Date": "2019-05-01"
+                    "IsAttended": true
+                },
+                {
+                    "Date": "2019-05-04"
+                    "IsAttended": false
+                }
+            ]
+        }
+     ]
+     ```
