@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 using UsersPaymentManager.Models;
 using UsersPaymentManager.Services;
 

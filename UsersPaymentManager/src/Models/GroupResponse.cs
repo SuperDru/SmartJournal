@@ -1,5 +1,5 @@
 using System;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 
 namespace UsersPaymentManager.Models
 {

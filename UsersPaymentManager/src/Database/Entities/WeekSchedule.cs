@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UsersPaymentManager.Database.Entities
+namespace Storage
 {
     [Serializable]
     [Table("week_schedule")]

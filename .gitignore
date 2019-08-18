@@ -33,5 +33,3 @@ Desktop.ini
 .DS_Store
 WebChat/Configuration/
 node_modules/
-
-UsersPaymentManager/appsettings.Development.json

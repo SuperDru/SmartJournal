@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 
 namespace UsersPaymentManager.Database
 {

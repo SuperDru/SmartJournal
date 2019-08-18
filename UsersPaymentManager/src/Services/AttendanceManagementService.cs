@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UsersPaymentManager.Database;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 using UsersPaymentManager.Models;
 
 namespace UsersPaymentManager.Services
@@ -12,7 +12,8 @@ namespace UsersPaymentManager.Services
     {
         Task<ICollection<AttendanceResponse>> GetAttendance(Guid id, DateTime start, DateTime end);
         Task<ICollection<AttendanceResponse>> UpdateAttendance(Guid id, IEnumerable<AttendanceRequest> request);
-        Task UpdateDayPayments(Guid id, Guid paymentId = default);
+        Task UpdateDayPaymentsByGroup(Guid groupId, Guid paymentId = default);
+        Task UpdateDayPaymentsByUserWithoutSave(Guid userId, Guid paymentId = default);
         Task CancelUpdate(Guid userId, Guid paymentId);
     }
     
@@ -86,37 +87,39 @@ namespace UsersPaymentManager.Services
                 _db.AddRange(attendanceToAdd);
                 _db.RemoveRange(attendanceToRemove);
                 
-                await UpdateDayPayments(id);
+                await UpdateDayPaymentsByGroup(id);
             }
 
             return await GetAttendance(id, startDate, endDate);
         }
         
-        public async Task UpdateDayPayments(Guid id, Guid paymentId = default)
+        public async Task UpdateDayPaymentsByGroup(Guid groupId, Guid paymentId = default)
         {
-            var group = await _db.GetGroupAsync(id);
-
+            var group = await _db.GetGroupAsync(groupId);
             var users = group.Users;
 
-            var toUpdate = new List<Attendance>();
-            
             foreach (var user in users)
-                foreach (var att in user.User.Attendance.Where(a => a.PaymentAmount <= 0.00001).OrderBy(x => x.Date))
-                {
-                    att.AfterPayment = paymentId;
-                    if (!await _accountManagementService.DecreaseAmount(user.User.Guid, group.Cost, att.Dept)) {
-                        att.Dept = true;
-                        break;
-                    }
-
-                    att.PaymentAmount = group.Cost;
-                    att.Dept = false;
-                    
-                    toUpdate.Add(att);
-                }
+                await UpdateDayPaymentsByUserWithoutSave(user.User.Guid, paymentId);
             
-            _db.UpdateRange(toUpdate);
             await _db.SaveChangesAsync();
+        }
+        
+        public async Task UpdateDayPaymentsByUserWithoutSave(Guid userId, Guid paymentId = default)
+        {
+            var user = await _db.GetUserAsync(userId);
+
+            foreach (var att in user.Attendance.Where(a => a.PaymentAmount <= 0.00001).OrderBy(x => x.Date))
+            {
+                bool resultCharging;
+                
+                // ReSharper disable once AssignmentInConditionalExpression
+                if (resultCharging = await _accountManagementService.DecreaseAmount(user.Guid, att.Group.Cost, att.Dept))
+                    att.PaymentAmount = att.Group.Cost;
+                att.Dept = !resultCharging;
+                att.AfterPayment = paymentId;
+                
+                _db.Update(att);
+            }
         }
         
         public async Task CancelUpdate(Guid userId, Guid paymentId)
@@ -126,6 +129,7 @@ namespace UsersPaymentManager.Services
             foreach (var att in user.Attendance.Where(a => a.AfterPayment == paymentId).OrderBy(x => x.Date))
             {
                 await _accountManagementService.IncreaseAmount(user.Guid, att.PaymentAmount);
+                if (att.)
                 att.Dept = false;
             }
             

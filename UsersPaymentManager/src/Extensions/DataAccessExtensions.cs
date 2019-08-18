@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UsersPaymentManager.Database;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 using Microsoft.Extensions.DependencyInjection;
 using UsersPaymentManager.Services;
 
@@ -115,11 +115,6 @@ namespace UsersPaymentManager
             await Check(db);
 
             return Groups?.Values;
-        }
-
-        public static void SetCacheExpirationTime(this DatabaseContext db, TimeSpan time)
-        {
-            SchedulingDatabaseUpdateService.ExpirationTime = time;
         }
     }
 }

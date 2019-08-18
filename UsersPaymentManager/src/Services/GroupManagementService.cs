@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using UsersPaymentManager.Database;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 using UsersPaymentManager.Models;
 
 namespace UsersPaymentManager.Services

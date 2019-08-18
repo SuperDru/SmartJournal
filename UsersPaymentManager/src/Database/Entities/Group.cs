@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Internal;
 
-namespace UsersPaymentManager.Database.Entities
+namespace Storage
 {
     [Serializable]
     [Table("groups")]

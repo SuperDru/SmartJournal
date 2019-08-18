@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-namespace UsersPaymentManager.Database.Entities
+namespace Storage
 {
     [Serializable]
     [Table("payments")]

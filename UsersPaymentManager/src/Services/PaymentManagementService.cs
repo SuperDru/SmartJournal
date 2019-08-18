@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UsersPaymentManager.Database;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 using UsersPaymentManager.Models;
 
 namespace UsersPaymentManager.Services
@@ -48,9 +48,10 @@ namespace UsersPaymentManager.Services
             _db.Payments.Add(payment);
 
             await _accountService.IncreaseAmount(userId, payment.Amount);
-            foreach (var group in user.Groups)
-                await _attendanceService.UpdateDayPayments(group.Group.Guid);
+            await _attendanceService.UpdateDayPaymentsByUserWithoutSave(user.Guid);
 
+            await _db.SaveChangesAsync();
+            
             return payment.Id;
         }
 

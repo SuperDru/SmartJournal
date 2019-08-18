@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using UsersPaymentManager.Database;
-using UsersPaymentManager.Database.Entities;
+using Storage;
 using UsersPaymentManager.Models;
 
 namespace UsersPaymentManager.Services

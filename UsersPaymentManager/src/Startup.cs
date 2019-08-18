@@ -32,7 +32,6 @@ namespace UsersPaymentManager
 
             services.AddScoped<IGroupManagementService, GroupManagementService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
-            services.AddScoped<IScheduleManagementService, ScheduleManagementService>();
             services.AddScoped<IAccountManagementService, AccountManagementService>();
             services.AddScoped<IAttendanceManagementService, AttendanceManagementService>();
             

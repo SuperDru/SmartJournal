@@ -1,11 +1,11 @@
-namespace UsersPaymentManager.Models
+namespace StudentsSystem
 {
-    public class UserProfile
+    public class UserModel
     {
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Patronymic { get; set; }
-        public long PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public string Email { get; set; }
     }
 }

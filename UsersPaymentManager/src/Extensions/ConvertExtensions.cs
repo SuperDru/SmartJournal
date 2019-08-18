@@ -1,4 +1,4 @@
-using UsersPaymentManager.Database.Entities;
+using Storage;
 using UsersPaymentManager.Models;
 
 namespace UsersPaymentManager
