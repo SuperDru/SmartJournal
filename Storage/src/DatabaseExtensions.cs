@@ -1,11 +1,32 @@
 using System.Collections.Generic;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Storage
 {
     public static class DatabaseExtensions
     {
+        public static IWebHostBuilder AddDatabase(this IWebHostBuilder host)
+        {
+            host.ConfigureAppConfiguration((ctx, builder) =>
+            {
+                builder.AddJsonFile(Path.Combine(ctx.HostingEnvironment.ContentRootPath, "..",
+                    "Configuration/DatabaseCfg.json"));
+            });
+            
+            host.ConfigureServices((context, services) =>
+            {
+                services.AddEntityFrameworkNpgsql();
+                services.AddDbContext<DatabaseContext>((p, o) => o.UseNpgsql(context.Configuration["ConnectionString"]));
+                services.AddSingleton<IDatabaseCache, DatabaseCache>();
+            });
+
+            return host;
+        }
         public static IIncludableQueryable<User, List<Attendance>> GetUsersWithIncludes(this DatabaseContext db) =>
             db.Users
                 .Include(u => u.Account)

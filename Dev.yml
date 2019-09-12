@@ -16,9 +16,20 @@ services:
         build:
           context: ./
           dockerfile: Dockerfile
-        depends_on: ['postgres']
+        depends_on:
+          - postgres
         ports:
           - "8200:80"
+    att-payments:
+        container_name: 'att-payments'
+        build:
+          context: ./
+          dockerfile: AttPaym.Dockerfile
+        depends_on:
+          - postgres
+          - students-system
+        ports:
+          - "8202:80"
         
 
 

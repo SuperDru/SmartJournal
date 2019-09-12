@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Storage;
 
-namespace Storage
+namespace StudentsSystem
 {
     public class Program
     {
@@ -14,12 +15,12 @@ namespace Storage
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) => 
             WebHost.CreateDefaultBuilder(args)
-//                .ConfigureAppConfiguration((ctx, builder) =>
-//                {
-//                    builder.AddJsonFile(Path.Combine(ctx.HostingEnvironment.ContentRootPath, "..",
-//                        "Configuration/DatabaseCfg.json"));
-//                })
+                .ConfigureAppConfiguration((ctx, builder) =>
+                {
+                    //builder.AddJsonFile(Path.Combine(ctx.HostingEnvironment.ContentRootPath, "..",
+                      //  "Configuration/DatabaseCfg.json"));
+                })
                 .AddDatabase()
-                .UseStartup<StorageStartup>();
+                .UseStartup<StudentsSystemStartup>();
     }
 }

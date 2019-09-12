@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersPaymentManager", "User
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentsSystem", "StudentsSystem\StudentsSystem.csproj", "{98D08CE8-A8CE-4E90-822C-9CA6FF06FD89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsSystem", "PaymentsSystem\PaymentsSystem.csproj", "{5D8A0AB3-FEAD-420C-8549-242C2AE6B910}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttendanceAndPayments", "AttendanceAndPayments\AttendanceAndPayments.csproj", "{5D8A0AB3-FEAD-420C-8549-242C2AE6B910}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.csproj", "{C543385A-7310-436C-9C5B-1B27A676050C}"
 EndProject
