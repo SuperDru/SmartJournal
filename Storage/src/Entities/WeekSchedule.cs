@@ -26,7 +26,7 @@ namespace Storage
 
         public string GetStartTime(DateTime day)
         {
-            return StartTimes[((int) day.DayOfWeek + 6) % 7];
+            return StartTimes.Length >= 7 ? StartTimes[((int) day.DayOfWeek + 6) % 7] : null;
         }
     }
 }
