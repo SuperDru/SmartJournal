@@ -18,16 +18,12 @@ namespace StudentsSystem
                 Amount = source.Account.Amount,
                 Dept = source.Account.Dept,
             };
-        
-        public static User ToUser(this UserModel source) =>
-            new User
+
+        public static User ToUser(this UserModel source, User target = null)
+        {
+            target = target ?? new User
             {
                 Guid = Guid.NewGuid(),
-                Name = source.Name,
-                Email = source.Email,
-                Surname = source.Surname,
-                Patronymic = source.Patronymic,
-                PhoneNumber = source.PhoneNumber,
                 Account = new Account
                 {
                     Amount = 0,
@@ -35,5 +31,13 @@ namespace StudentsSystem
                     UpdatedAt = DateTime.Now
                 }
             };
+            target.Name = source.Name;
+            target.Email = source.Email;
+            target.Surname = source.Surname;
+            target.Patronymic = source.Patronymic;
+            target.PhoneNumber = source.PhoneNumber;
+
+            return target;
+        }
     }
 }

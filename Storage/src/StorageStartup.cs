@@ -17,7 +17,6 @@ namespace Storage
         
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureDatabase(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -26,12 +25,6 @@ namespace Storage
             {
                 app.UseDeveloperExceptionPage();
             }
-        }
-        
-        private static void ConfigureDatabase(IServiceCollection services)
-        {
-            services.AddEntityFrameworkNpgsql();
-            services.AddDbContext<DatabaseContext>((p, o) => o.UseNpgsql(_configuration["ConnectionString"]));
         }
     }
 }

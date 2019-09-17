@@ -37,10 +37,9 @@ namespace StudentsSystem
         [HttpPut("{userId}")]
         public async Task UpdateUser([FromRoute] Guid userId, [FromBody] UserModel request)
         {
-            var user = request.ToUser();
-            user.Guid = userId;
+            var user = _cache.GetUser(userId);
 
-            await _cache.AddOrUpdateUser(user);
+            await _cache.AddOrUpdateUser(request.ToUser(user));
         }
 
         [HttpDelete("{userId}")]

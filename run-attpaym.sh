@@ -1,12 +1,8 @@
-#!/bin/bash
- 
-cd Configuration
-echo "Host=postgres;Port=5432;Database=smart_journal;Username=postgres;Password=mydb" > DatabaseCfg.json
+#!/bin/bash 
 
-cd ././AttendanceAndPayments/
+echo "{ \"ConnectionString\": \"Host=postgres;Port=5432;Database=smart_journal;Username=postgres;Password=mydb\" }" > Configuration/DatabaseCfg.json
 
-dockerize -timeout 300s -wait-retry-interval 3s -wait tcp://postgres:5432 dotnet publish AttendanceAndPayments/AttendanceAndPayments.csproj --output ./../dbuild
+dockerize -timeout 300s -wait-retry-interval 3s -wait tcp://postgres:5432 dotnet publish AttendanceAndPayments/AttendanceAndPayments.csproj --output ./../build
 
-cd ../build
-
+cd build
 dotnet AttendanceAndPayments.dll

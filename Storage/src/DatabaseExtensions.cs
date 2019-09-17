@@ -21,7 +21,7 @@ namespace Storage
             host.ConfigureServices((context, services) =>
             {
                 services.AddEntityFrameworkNpgsql();
-                services.AddDbContext<DatabaseContext>((p, o) => o.UseNpgsql(context.Configuration["ConnectionString"]));
+                services.AddDbContext<DatabaseContext>((p, o) => o.UseNpgsql(context.Configuration["ConnectionString"]), ServiceLifetime.Singleton);
                 services.AddSingleton<IDatabaseCache, DatabaseCache>();
             });
 

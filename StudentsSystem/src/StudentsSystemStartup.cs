@@ -25,7 +25,7 @@ namespace StudentsSystem
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(o => o.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
+            app.UseCors(o => o.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().AllowCredentials());
             app.UseMvc();
         }
     }

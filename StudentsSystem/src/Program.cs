@@ -15,11 +15,6 @@ namespace StudentsSystem
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) => 
             WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((ctx, builder) =>
-                {
-                    //builder.AddJsonFile(Path.Combine(ctx.HostingEnvironment.ContentRootPath, "..",
-                      //  "Configuration/DatabaseCfg.json"));
-                })
                 .AddDatabase()
                 .UseStartup<StudentsSystemStartup>();
     }
