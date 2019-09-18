@@ -12,13 +12,13 @@ namespace AttendanceAndPayments
     {
         private readonly IDatabaseCache _cache;
         private readonly IAccountManagementService _account;
-        private readonly IBus _bus;
+        private readonly IAttendanceService _attendanceService;
 
-        public PaymentsController(IDatabaseCache cache, IBus bus, IAccountManagementService account)
+        public PaymentsController(IDatabaseCache cache, IAccountManagementService account, IAttendanceService attendanceService)
         {
             _account = account;
             _cache = cache;
-            _bus = bus;
+            _attendanceService = attendanceService;
         }
 
         [HttpGet]
@@ -39,7 +39,7 @@ namespace AttendanceAndPayments
             await _account.Deposit(userId, payment.Amount);
             await _cache.AddOrUpdateUser(user);
 
-            await _bus.Notify(new[] { user.Id });
+            await _attendanceService.Transform(await _account.Notify(new[] { user.Id }));
 
             return payment.Guid;
         }

@@ -21,7 +21,6 @@ namespace AttendanceAndPayments
 
             services.AddScoped<IAccountManagementService, AccountManagementService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
-            services.AddScoped<IBus, Bus>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -16,12 +16,12 @@ namespace AttendanceAndPayments
     public class AttendanceService: IAttendanceService
     {
         private readonly IDatabaseCache _cache;
-        private readonly IBus _bus;
+        private readonly IAccountManagementService _account;
 
-        public AttendanceService(IDatabaseCache cache, IBus bus)
+        public AttendanceService(IDatabaseCache cache, IAccountManagementService account)
         {
             _cache = cache;
-            _bus = bus;
+            _account = account;
         }
         
         public ICollection<AttendanceResponse> GetAttendance(Guid groupId, DateTime @from, DateTime to)
@@ -76,32 +76,36 @@ namespace AttendanceAndPayments
             }
 
             await _cache.AddOrUpdateGroup(group);
-            await _bus.Transform(deptChanges);
+            await _cache.Transform(deptChanges);
+            await Transform(await _account.Notify(deptChanges.Keys));
         }
 
         public async Task Transform(IDictionary<int, float> deptChanges)
         {
-            foreach (var (userId, amount) in deptChanges)
+            while (deptChanges != null)
             {
-                var user = _cache.GetUser(userId);
-                
-                var curAmount = amount;
-                var notPaidAttendance = user.Attendance.Where(x => x.PaymentAmount <= 0);
-                
-                foreach (var day in notPaidAttendance)
+                foreach (var (userId, amount) in deptChanges)
                 {
-                    if (curAmount >= -day.PaymentAmount)
+                    var user = _cache.GetUser(userId);
+
+                    var curAmount = amount;
+                    var notPaidAttendance = user.Attendance.Where(x => x.PaymentAmount <= 0);
+
+                    foreach (var day in notPaidAttendance)
                     {
-                        day.PaymentAmount = -day.PaymentAmount;
-                        curAmount -= day.PaymentAmount;
+                        if (curAmount >= -day.PaymentAmount)
+                        {
+                            day.PaymentAmount = -day.PaymentAmount;
+                            curAmount -= day.PaymentAmount;
+                        }
                     }
+
+                    deptChanges[userId] = -curAmount;
                 }
 
-                deptChanges[userId] = -curAmount;
+                await _cache.Transform(deptChanges);
+                deptChanges = await _account.Notify(deptChanges.Keys);
             }
-            
-            await _bus.Transform(deptChanges);
-            await _cache.UpdateUsers();
         }
     }
 }
