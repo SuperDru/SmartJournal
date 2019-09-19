@@ -50,26 +50,35 @@ namespace StudentsSystem
         public async Task AssignUserToGroup([FromBody] AssignUserToGroupRequest request)
         {
             var group = _cache.GetGroup(request.GroupId);
-            var user = _cache.GetUser(request.UserId);
-            
-            user.Groups.Add(new UserGroup
-            {
-                GroupId = group.Id,
-                UserId = user.Id
-            });
 
-            await _cache.AddOrUpdateUser(user);
+            foreach (var userId in request.UserIds)
+            {
+                var user = _cache.GetUser(userId);
+            
+                user.Groups.Add(new UserGroup
+                {
+                    GroupId = group.Id,
+                    UserId = user.Id
+                });   
+            }
+
+            await _cache.UpdateUsers();
         }
 
         [HttpDelete("assign")]
         public async Task RemoveUserFromGroup([FromBody] AssignUserToGroupRequest request)
         {
             var group = _cache.GetGroup(request.GroupId);
-            var user = _cache.GetUser(request.UserId);
+            
+            foreach (var userId in request.UserIds)
+            {
+                var user = _cache.GetUser(userId);
+                
+                user.Groups.RemoveAll(x => x.GroupId == group.Id && x.UserId == user.Id); 
+            }
 
-            user.Groups.RemoveAll(x => x.GroupId == group.Id && x.UserId == user.Id);
 
-            await _cache.AddOrUpdateUser(user);
+            await _cache.UpdateUsers();
         }
     }
 }

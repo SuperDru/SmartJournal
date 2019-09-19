@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 
 namespace StudentsSystem
 {
     public class AssignUserToGroupRequest
     {
-        public Guid UserId { get; set; }
+        public ICollection<Guid> UserIds { get; set; }
         public Guid GroupId { get; set; }
     }
 }
