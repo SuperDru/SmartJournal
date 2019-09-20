@@ -55,9 +55,7 @@ namespace AttendanceAndPayments
 
                 foreach (var newDay in newDays)
                 {
-                    var oldDay = oldDays[newDay.Date];
-
-                    if (oldDay == null && newDay.IsAttended)
+                    if (!oldDays.TryGetValue(newDay.Date, out var oldDay) && newDay.IsAttended)
                     {
                         user.Attendance.Add(new Attendance
                         {
@@ -65,12 +63,12 @@ namespace AttendanceAndPayments
                             GroupId = group.Id,
                             PaymentAmount = -group.Cost
                         });
-                        deptChanges[user.Id] += group.Cost;
+                        deptChanges[user.Id] = deptChanges.ContainsKey(user.Id) ? deptChanges[user.Id] + group.Cost : group.Cost;
                     }
                     else if (oldDay != null && !newDay.IsAttended)
                     {
                         user.Attendance.Remove(oldDay);
-                        deptChanges[user.Id] -= oldDay.PaymentAmount;
+                        deptChanges[user.Id] = deptChanges.ContainsKey(user.Id) ?  deptChanges[user.Id] - oldDay.PaymentAmount : -oldDay.PaymentAmount;
                     }
                 }
             }
@@ -82,30 +80,29 @@ namespace AttendanceAndPayments
 
         public async Task Transform(IDictionary<int, float> deptChanges)
         {
-            while (deptChanges != null)
+            foreach (var (userId, amount) in deptChanges.ToArray())
             {
-                foreach (var (userId, amount) in deptChanges)
+                var user = _cache.GetUser(userId);
+
+                var curAmount = amount;
+                var notPaidAttendance = user.Attendance.Where(x => x.PaymentAmount <= 0);
+
+                foreach (var day in notPaidAttendance)
                 {
-                    var user = _cache.GetUser(userId);
-
-                    var curAmount = amount;
-                    var notPaidAttendance = user.Attendance.Where(x => x.PaymentAmount <= 0);
-
-                    foreach (var day in notPaidAttendance)
+                    if (curAmount >= -day.PaymentAmount)
                     {
-                        if (curAmount >= -day.PaymentAmount)
-                        {
-                            day.PaymentAmount = -day.PaymentAmount;
-                            curAmount -= day.PaymentAmount;
-                        }
+                        day.PaymentAmount = -day.PaymentAmount;
+                        curAmount -= day.PaymentAmount;
                     }
-
-                    deptChanges[userId] = -curAmount;
                 }
 
-                await _cache.Transform(deptChanges);
-                deptChanges = await _account.Notify(deptChanges.Keys);
+                if (curAmount > 0)
+                    await _account.Deposit(user.Guid, curAmount);
+                    
+                deptChanges[userId] = curAmount;
             }
+            
+            await _cache.Transform(deptChanges);
         }
     }
 }

@@ -33,3 +33,4 @@ Desktop.ini
 .DS_Store
 WebChat/Configuration/
 node_modules/
+**/Properties/

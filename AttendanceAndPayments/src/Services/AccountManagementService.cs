@@ -43,19 +43,11 @@ namespace AttendanceAndPayments
 
             var res = 0f;
 
-            if (Math.Abs(account.Dept) < 0.00001 || account.Amount <= 0) return res;
+            if (account.Dept < 0.00001 || account.Dept > 0 && account.Amount < 0) return res;
             
-            if (account.Dept < 0)
-            {
-                account.Amount -= account.Dept;
-            }
-            else
-            {
-                var result = MathF.Min(account.Amount, account.Dept);
-                account.Amount -= result;
-                res = result;
-            }
-            account.Dept = 0;
+            res = MathF.Min(account.Amount, account.Dept);
+            account.Amount -= res;
+            account.Dept -= res;
             account.UpdatedAt = DateTime.Now; 
 
             await _cache.AddOrUpdateUser(user);

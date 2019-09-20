@@ -34,12 +34,14 @@ namespace Storage
                 .Include(u => u.Roles)
                 .ThenInclude(ur => ur.Role)
                 .Include(u => u.Groups)
+                .ThenInclude(x => x.Group)
                 .Include(u => u.Attendance);
 
-        public static IIncludableQueryable<Group, List<UserGroup>> GetGroupsWithIncludes(this DatabaseContext db) =>
+        public static IIncludableQueryable<Group, List<TrueSchedule>> GetGroupsWithIncludes(this DatabaseContext db) =>
             db.Groups
                 .Include(g => g.WeekSchedule)
-                .Include(g => g.TrueSchedules)
-                .Include(g => g.Users);
+                .Include(g => g.Users)
+                .ThenInclude(x => x.User)
+                .Include(g => g.TrueSchedules);
     }
 }

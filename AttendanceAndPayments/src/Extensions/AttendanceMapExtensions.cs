@@ -9,7 +9,7 @@ namespace AttendanceAndPayments
             return new UserDayInfoResponse
             {
                 Date = source.Date,
-                IsPaid = source.PaymentAmount <= 0.00001
+                IsPaid = source.PaymentAmount > 0.00001
             };
         }
     }

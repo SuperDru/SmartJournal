@@ -28,7 +28,7 @@ namespace AttendanceAndPayments
                     deptChanges[userId] = res;
             }
 
-            return deptChanges.Count == 0 ? null : deptChanges;
+            return deptChanges;
         }
     }
 }
