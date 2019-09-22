@@ -7,16 +7,21 @@ using Storage;
 
 namespace StudentsSystem
 {
+    /// <inheritdoc />
     [Route("/schedule/{groupId}")]
     public class ScheduleController: Controller
     {
         private readonly IDatabaseCache _cache;
 
+        /// <inheritdoc />
         public ScheduleController(IDatabaseCache cache)
         {
             _cache = cache;
         }
 
+        /// <summary>
+        /// Returns schedule with all changes of group with {groupId} from {from} to {to} date
+        /// </summary>
         [HttpGet]
         public ICollection<TrueScheduleModel> GetSchedule([FromRoute] Guid groupId, [FromQuery] DateTime from, [FromQuery] DateTime to)
         {
@@ -31,6 +36,9 @@ namespace StudentsSystem
                 .ToList();
         }
 
+        /// <summary>
+        /// Adds, updates or deletes days of schedule of group with {groupId}
+        /// </summary>
         [HttpPut]
         public async Task UpdateSchedule([FromRoute] Guid groupId, [FromBody] ICollection<TrueScheduleRequest> request)
         {

@@ -36,6 +36,8 @@ namespace AttendanceAndPayments
                 foreach (var path in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml"))
                     options.IncludeXmlComments(path);
             });
+
+            services.AddCors();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -47,6 +49,7 @@ namespace AttendanceAndPayments
 
             app.UseSwagger();
             app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Journal Documentation"));
+            app.UseCors(o => o.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().AllowCredentials());
             app.UseMvc();
         }
     }

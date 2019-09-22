@@ -16,5 +16,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Storage\Storage.csproj" />
     </ItemGroup>
-    
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DocumentationFile>bin\Debug\netcoreapp2.2\PowerBiApiService.xml</DocumentationFile>
+    </PropertyGroup>
 </Project>

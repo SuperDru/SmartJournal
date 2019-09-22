@@ -7,6 +7,7 @@ using Storage;
 
 namespace AttendanceAndPayments
 {
+    /// <inheritdoc />
     [Route("payments/{userId}")]
     public class PaymentsController: Controller
     {
@@ -14,6 +15,7 @@ namespace AttendanceAndPayments
         private readonly IAccountManagementService _account;
         private readonly IAttendanceService _attendanceService;
 
+        /// <inheritdoc />
         public PaymentsController(IDatabaseCache cache, IAccountManagementService account, IAttendanceService attendanceService)
         {
             _account = account;
@@ -21,10 +23,17 @@ namespace AttendanceAndPayments
             _attendanceService = attendanceService;
         }
 
+        /// <summary>
+        /// Returns all payments of the user with {userId} from {from} to {to} date 
+        /// </summary>
         [HttpGet]
         public ICollection<PaymentResponse> GetUserPayments([FromRoute] Guid userId, [FromQuery] DateTime from, [FromQuery] DateTime to) =>
             _cache.GetUser(userId).Payments.Where(x => x.PaidAt >= from && x.PaidAt <= to).Select(x => x.ToPaymentResponse()).ToList();
 
+        /// <summary>
+        /// Performs a deposit to the account of the user with {userId}. 
+        /// Returns guid of the performed payment
+        /// </summary>
         [HttpPost]
         public async Task<Guid> PerformPayment([FromRoute] Guid userId, [FromBody] PaymentModel request)
         {
@@ -44,6 +53,9 @@ namespace AttendanceAndPayments
             return payment.Guid;
         }
         
+        /// <summary>
+        /// Cancels a payment with {paymentId} of the user with {userId}
+        /// </summary>
         [HttpDelete("{paymentId}")]
         public async Task CancelPayment([FromRoute] Guid userId, [FromRoute] Guid paymentId)
         {
