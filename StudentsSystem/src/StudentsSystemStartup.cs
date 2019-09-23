@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
+using Storage;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace StudentsSystem
@@ -12,7 +13,7 @@ namespace StudentsSystem
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
+            services.AddMvc(o => o.Filters.Add<ApiExceptionFilter>())
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 );
@@ -43,6 +44,7 @@ namespace StudentsSystem
 
             app.UseSwagger();
             app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Journal Documentation"));
+            
             app.UseCors(o => o.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin().AllowCredentials());
             app.UseMvc();
         }
