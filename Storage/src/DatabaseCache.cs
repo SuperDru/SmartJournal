@@ -119,6 +119,11 @@ namespace Storage
             
             _db.Add(group);
             await _db.SaveChangesAsync();
+            
+            var newGroup = await _db.GetGroupsWithIncludes().FirstOrDefaultAsync(x => x.Guid == group.Guid);
+
+            GroupsById.TryAdd(newGroup.Id, newGroup);
+            GroupsByGuid.TryAdd(newGroup.Guid, newGroup);
         }
 
         public async Task AddOrUpdateGroup(Group group)
@@ -127,11 +132,6 @@ namespace Storage
             {
                 _db.Update(group);
                 await _db.SaveChangesAsync();
-
-                var newGroup = await _db.GetGroupsWithIncludes().FirstOrDefaultAsync(x => x.Guid == group.Guid);
-
-                GroupsById.TryUpdate(newGroup.Id, newGroup, oldGroup);
-                GroupsByGuid.TryUpdate(newGroup.Guid, newGroup, oldGroup);
                 
                 return;
             }
