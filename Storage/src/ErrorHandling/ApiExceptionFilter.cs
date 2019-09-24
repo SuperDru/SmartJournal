@@ -24,9 +24,12 @@ namespace Storage
                 return;
             }
             
-            context.Result = new ObjectResult(new ApiError(9999, "Unexpected error"));
+            context.Result = new ObjectResult(new ApiError(9999, $"Unexpected error: {ex.Message}"))
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
             
-            Log.Information("Unexpected error");
+            Log.Information(ex.Message);
         }
     }
 
