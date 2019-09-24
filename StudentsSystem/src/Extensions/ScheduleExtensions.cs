@@ -9,7 +9,7 @@ namespace StudentsSystem
     {
         public static void BuildSchedule(this ICollection<TrueSchedule> schedule, WeekSchedule newSchedule, DateTime to = default)
         {
-            to = to < DateTime.Today.AddMonths(1) ? DateTime.Today.AddMonths(1) : to;
+            to = to < DateTime.Today.AddMonths(4) ? DateTime.Today.AddMonths(4) : to;
             
             for (var cur = DateTime.Today; cur <= to; cur = cur.AddDays(1))
             {

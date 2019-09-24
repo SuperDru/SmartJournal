@@ -27,7 +27,7 @@ namespace StudentsSystem
         {
             if (to == default) to = DateTime.Today.AddMonths(1);
             
-            if (to > DateTime.Today.AddMonths(1)) return null;
+            if (to > DateTime.Today.AddMonths(4)) return null;
 
             var group = _cache.GetGroup(groupId);
             return group.TrueSchedules
