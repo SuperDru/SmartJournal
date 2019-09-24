@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Storage;
 
@@ -31,7 +32,7 @@ namespace StudentsSystem
         /// </summary>
         [HttpGet("{groupId}")]
         public GroupModel GetGroup([FromRoute] Guid groupId) =>
-            _cache.GetGroup(groupId).ToGroupModel();
+            _cache.GetExistingGroup(groupId).ToGroupModel();
 
         /// <summary>
         /// Creates new group. 
@@ -41,6 +42,9 @@ namespace StudentsSystem
         public async Task<GroupResponse> CreateGroup([FromBody] GroupModel request)
         {
             var group = request.ToGroup();
+
+            if (_cache.GetGroups().Count(x => x.Name == group.Name) != 0)
+                Errors.GroupWithThisNameExistsError.Throw(StatusCodes.Status403Forbidden);
             
             group.TrueSchedules = new List<TrueSchedule>();
             group.TrueSchedules.BuildSchedule(group.WeekSchedule);
@@ -56,7 +60,12 @@ namespace StudentsSystem
         [HttpPut("{groupId}")]
         public async Task<GroupResponse> UpdateGroup([FromRoute] Guid groupId, [FromBody] GroupModel request)
         {
-            var group = request.ToGroup(_cache.GetGroup(groupId));
+            var oldGroup = _cache.GetExistingGroup(groupId);
+            
+            if (oldGroup.Name != request.Name && _cache.GetGroups().Count(x => x.Name == request.Name) != 0)
+                Errors.GroupWithThisNameExistsError.Throw(StatusCodes.Status403Forbidden);
+            
+            var group = request.ToGroup(oldGroup);
             group.TrueSchedules.BuildSchedule(group.WeekSchedule);
 
             await _cache.AddOrUpdateGroup(group);
@@ -67,14 +76,19 @@ namespace StudentsSystem
         /// Deletes the group with {groupId}
         /// </summary>
         [HttpDelete("{groupId}")]
-        public async Task RemoveGroup([FromRoute] Guid groupId) =>
+        public async Task RemoveGroup([FromRoute] Guid groupId)
+        {
+            // Check that group is existed
+            _cache.GetExistingGroup(groupId);
+            
             await _cache.RemoveGroup(groupId);
+        }
 
         /// <summary>
         /// Returns users of the group with {groupId}
         /// </summary>
         [HttpGet("{groupId}/users")]
         public ICollection<UserResponse> GetUsers([FromRoute] Guid groupId) => 
-            _cache.GetGroup(groupId).Users.Select(x => x.User.ToUserResponse()).ToList();
+            _cache.GetExistingGroup(groupId).Users.Select(x => x.User.ToUserResponse()).ToList();
     }
 }
