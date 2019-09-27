@@ -34,3 +34,4 @@ Desktop.ini
 WebChat/Configuration/
 node_modules/
 **/Properties/
+/.idea/
