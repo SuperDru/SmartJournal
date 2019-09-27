@@ -8,7 +8,7 @@ using Storage;
 namespace AttendanceAndPayments
 {
     /// <inheritdoc />
-    [Route("payments/{userId}")]
+    [Route("payments/{userId:Guid}")]
     public class PaymentsController: Controller
     {
         private readonly IDatabaseCache _cache;
@@ -56,7 +56,7 @@ namespace AttendanceAndPayments
         /// <summary>
         /// Cancels a payment with {paymentId} of the user with {userId}
         /// </summary>
-        [HttpDelete("{paymentId}")]
+        [HttpDelete("{paymentId:Guid}")]
         public async Task CancelPayment([FromRoute] Guid userId, [FromRoute] Guid paymentId)
         {
             var user = _cache.GetUser(userId);

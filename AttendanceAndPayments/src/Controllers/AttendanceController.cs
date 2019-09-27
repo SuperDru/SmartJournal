@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AttendanceAndPayments
 {
     /// <inheritdoc />
-    [Route("attendance/{groupId}")]
+    [Route("attendance/{groupId:Guid}")]
     public class AttendanceController: Controller
     {
         private readonly IAttendanceService _attendanceService;

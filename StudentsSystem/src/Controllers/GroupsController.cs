@@ -30,7 +30,7 @@ namespace StudentsSystem
         /// <summary>
         /// Returns the group with {groupId}
         /// </summary>
-        [HttpGet("{groupId}")]
+        [HttpGet("{groupId:Guid}")]
         public GroupModel GetGroup([FromRoute] Guid groupId) =>
             _cache.GetExistingGroup(groupId).ToGroupModel();
 
@@ -57,7 +57,7 @@ namespace StudentsSystem
         /// Rewrites information about the group with {groupId}. 
         /// Returns group with updated information
         /// </summary>
-        [HttpPut("{groupId}")]
+        [HttpPut("{groupId:Guid}")]
         public async Task<GroupResponse> UpdateGroup([FromRoute] Guid groupId, [FromBody] GroupModel request)
         {
             var oldGroup = _cache.GetExistingGroup(groupId);
@@ -75,7 +75,7 @@ namespace StudentsSystem
         /// <summary>
         /// Deletes the group with {groupId}
         /// </summary>
-        [HttpDelete("{groupId}")]
+        [HttpDelete("{groupId:Guid}")]
         public async Task RemoveGroup([FromRoute] Guid groupId)
         {
             // Check that group is existed
@@ -87,7 +87,7 @@ namespace StudentsSystem
         /// <summary>
         /// Returns users of the group with {groupId}
         /// </summary>
-        [HttpGet("{groupId}/users")]
+        [HttpGet("{groupId:Guid}/users")]
         public ICollection<UserResponse> GetUsers([FromRoute] Guid groupId) => 
             _cache.GetExistingGroup(groupId).Users.Select(x => x.User.ToUserResponse()).ToList();
     }

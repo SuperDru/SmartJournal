@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Storage;
 
@@ -22,7 +23,7 @@ namespace StudentsSystem
         /// <summary>
         /// Returns user with {userId}
         /// </summary>
-        [HttpGet("{userId}")]
+        [HttpGet("{userId:Guid}")]
         public UserResponse GetUser([FromRoute] Guid userId) =>
             _cache.GetUser(userId).ToUserResponse();
 
@@ -50,7 +51,7 @@ namespace StudentsSystem
         /// Rewrites information about the user with {userId}. 
         /// Returns user with updated information
         /// </summary>
-        [HttpPut("{userId}")]
+        [HttpPut("{userId:Guid}")]
         public async Task<UserResponse> UpdateUser([FromRoute] Guid userId, [FromBody] UserModel request)
         {
             var user = _cache.GetUser(userId);
@@ -63,7 +64,7 @@ namespace StudentsSystem
         /// <summary>
         /// Deletes the users with {userId}
         /// </summary>
-        [HttpDelete("{userId}")]
+        [HttpDelete("{userId:Guid}")]
         public async Task DeleteUser([FromRoute] Guid userId) =>
             await _cache.RemoveUser(userId);
 
@@ -73,11 +74,15 @@ namespace StudentsSystem
         [HttpPost("assign")]
         public async Task AssignUserToGroup([FromBody] AssignUserToGroupRequest request)
         {
+            if (request.UserId == null && request.UserIds == null)
+                Errors.ValidationError("Fields UserId or UserIds must not be null.").Throw(StatusCodes.Status400BadRequest);
+            
             var group = _cache.GetGroup(request.GroupId);
 
             if (request.UserId != null && request.UserIds == null)
                 request.UserIds = new List<Guid> {request.UserId.Value};
             
+            // ReSharper disable once PossibleNullReferenceException
             foreach (var userId in request.UserIds)
             {
                 var user = _cache.GetUser(userId);
@@ -98,11 +103,15 @@ namespace StudentsSystem
         [HttpDelete("assign")]
         public async Task RemoveUserFromGroup([FromBody] AssignUserToGroupRequest request)
         {
+            if (request.UserId == null && request.UserIds == null)
+                Errors.ValidationError("Fields UserId or UserIds must not be null.").Throw(StatusCodes.Status400BadRequest);
+            
             var group = _cache.GetGroup(request.GroupId);
             
             if (request.UserId != null && request.UserIds == null)
                 request.UserIds = new List<Guid> {request.UserId.Value};
             
+            // ReSharper disable once PossibleNullReferenceException
             foreach (var userId in request.UserIds)
             {
                 var user = _cache.GetUser(userId);

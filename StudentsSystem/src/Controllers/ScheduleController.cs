@@ -8,7 +8,7 @@ using Storage;
 namespace StudentsSystem
 {
     /// <inheritdoc />
-    [Route("/schedule/{groupId}")]
+    [Route("/schedule/{groupId:Guid}")]
     public class ScheduleController: Controller
     {
         private readonly IDatabaseCache _cache;

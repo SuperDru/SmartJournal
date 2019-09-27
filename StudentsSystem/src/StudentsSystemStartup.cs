@@ -13,7 +13,11 @@ namespace StudentsSystem
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(o => o.Filters.Add<ApiExceptionFilter>())
+            services.AddMvc(o =>
+                {
+                    o.Filters.Add<ApiExceptionFilter>();
+                    o.Filters.Add<ApiActionFilter>();
+                })
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 );

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Storage;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace AttendanceAndPayments
@@ -16,7 +17,11 @@ namespace AttendanceAndPayments
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
+            services.AddMvc(o =>
+                {
+                    o.Filters.Add<ApiExceptionFilter>();
+                    o.Filters.Add<ApiActionFilter>();
+                })
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 );
