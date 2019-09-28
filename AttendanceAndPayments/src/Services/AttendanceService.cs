@@ -49,8 +49,8 @@ namespace AttendanceAndPayments
             {
                 var newDays = userAttendance.UpdatedAttendance.OrderBy(d => d.Date).ToList();
                 
-                if (newDays.Last().Date > DateTime.Today)
-                    Errors.AttemptToChangeAttendanceLaterTodayError.Throw(StatusCodes.Status403Forbidden);
+//                if (newDays.Last().Date > DateTime.Today)
+//                    Errors.AttemptToChangeAttendanceLaterTodayError.Throw(StatusCodes.Status403Forbidden);
 
                 if (newDays.Count(newDay => group.TrueSchedules.All(x => x.Date != newDay.Date)) != 0)
                     Errors.DayNotOnScheduleError.Throw(StatusCodes.Status403Forbidden);

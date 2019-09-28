@@ -47,8 +47,8 @@ namespace StudentsSystem
             var group = _cache.GetGroup(groupId);
             var trueSchedules = group.TrueSchedules;
             
-            if (request.Any(x => x.Date < DateTime.Today) || request.Any(x => x.Date == DateTime.Today) && group.Attendance.Any(x => x.Date == DateTime.Today))
-                Errors.AttemptToChangeFixedScheduleError.Throw(StatusCodes.Status403Forbidden);
+//            if (request.Any(x => x.Date < DateTime.Today) || request.Any(x => x.Date == DateTime.Today) && group.Attendance.Any(x => x.Date == DateTime.Today))
+//                Errors.AttemptToChangeFixedScheduleError.Throw(StatusCodes.Status403Forbidden);
             
             foreach (var day in request)
             {
