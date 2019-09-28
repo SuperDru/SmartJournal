@@ -78,7 +78,7 @@ namespace StudentsSystem
         [HttpDelete("{groupId:Guid}")]
         public async Task RemoveGroup([FromRoute] Guid groupId)
         {
-            // Check that group is existed
+            // Check that group exists
             _cache.GetExistingGroup(groupId);
             
             await _cache.RemoveGroup(groupId);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Storage;
 
 namespace AttendanceAndPayments
@@ -24,9 +25,9 @@ namespace AttendanceAndPayments
             _account = account;
         }
         
-        public ICollection<AttendanceResponse> GetAttendance(Guid groupId, DateTime @from, DateTime to)
+        public ICollection<AttendanceResponse> GetAttendance(Guid groupId, DateTime from, DateTime to)
         {
-            var group = _cache.GetGroup(groupId);
+            var group = _cache.GetExistingGroup(groupId);
             var users = group.Users;
             
             return (from user in users
@@ -40,13 +41,24 @@ namespace AttendanceAndPayments
 
         public async Task UpdateAttendance(Guid groupId, ICollection<AttendanceRequest> newAttendance)
         {
-            var group = _cache.GetGroup(groupId);
+            var group = _cache.GetExistingGroup(groupId);
 
             IDictionary<int, float> deptChanges = new Dictionary<int, float>();
-            
+
             foreach (var userAttendance in newAttendance)
             {
-                var user = _cache.GetUser(userAttendance.UserId);
+                var newDays = userAttendance.UpdatedAttendance.OrderBy(d => d.Date).ToList();
+                
+                if (newDays.Last().Date > DateTime.Today)
+                    Errors.AttemptToChangeAttendanceLaterTodayError.Throw(StatusCodes.Status403Forbidden);
+
+                if (newDays.Count(newDay => group.TrueSchedules.All(x => x.Date != newDay.Date)) != 0)
+                    Errors.DayNotOnScheduleError.Throw(StatusCodes.Status403Forbidden);
+            }
+
+            foreach (var userAttendance in newAttendance)
+            {
+                var user = _cache.GetExistingUser(userAttendance.UserId);
                 var newDays = userAttendance.UpdatedAttendance.OrderBy(d => d.Date).ToList();
 
                 var oldDays = user.Attendance

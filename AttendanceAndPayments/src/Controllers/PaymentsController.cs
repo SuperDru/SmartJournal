@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Storage;
 
@@ -28,7 +29,7 @@ namespace AttendanceAndPayments
         /// </summary>
         [HttpGet]
         public ICollection<PaymentResponse> GetUserPayments([FromRoute] Guid userId, [FromQuery] DateTime from, [FromQuery] DateTime to) =>
-            _cache.GetUser(userId).Payments.Where(x => x.PaidAt >= from && x.PaidAt <= to).Select(x => x.ToPaymentResponse()).ToList();
+            _cache.GetExistingUser(userId).Payments.Where(x => x.PaidAt >= from && x.PaidAt <= to).Select(x => x.ToPaymentResponse()).ToList();
 
         /// <summary>
         /// Performs a deposit to the account of the user with {userId}. 
@@ -40,7 +41,7 @@ namespace AttendanceAndPayments
             if (request.Payday == default)
                 request.Payday = DateTime.Now;
 
-            var user = _cache.GetUser(userId);
+            var user = _cache.GetExistingUser(userId);
             var payment = request.ToPayment();
             
             user.Payments.Add(payment);
@@ -59,11 +60,16 @@ namespace AttendanceAndPayments
         [HttpDelete("{paymentId:Guid}")]
         public async Task CancelPayment([FromRoute] Guid userId, [FromRoute] Guid paymentId)
         {
-            var user = _cache.GetUser(userId);
+            var user = _cache.GetExistingUser(userId);
             
-            var payment = user.Payments.First(x => x.Guid == paymentId);
+            var payment = user.Payments.FirstOrDefault(x => x.Guid == paymentId);
+            
+            if (payment == null)
+                Errors.PaymentNotFoundError.Throw(StatusCodes.Status404NotFound);
+            
             user.Payments.Remove(payment);
             
+            // ReSharper disable once PossibleNullReferenceException
             await _account.Deposit(userId, -payment.Amount);
             await _cache.AddOrUpdateUser(user);
         }

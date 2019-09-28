@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Storage;
 
@@ -23,13 +25,13 @@ namespace StudentsSystem
         /// Returns schedule with all changes of group with {groupId} from {from} to {to} date
         /// </summary>
         [HttpGet]
-        public ICollection<TrueScheduleModel> GetSchedule([FromRoute] Guid groupId, [FromQuery] DateTime from, [FromQuery] DateTime to)
+        public ICollection<TrueScheduleModel> GetSchedule([FromRoute] Guid groupId, [FromQuery, Required] DateTime from, [FromQuery] DateTime to)
         {
             if (to == default) to = DateTime.Today.AddMonths(1);
             
             if (to > DateTime.Today.AddMonths(4)) return null;
 
-            var group = _cache.GetGroup(groupId);
+            var group = _cache.GetExistingGroup(groupId);
             return group.TrueSchedules
                 .Where(x => x.Date >= from && x.Date <= to && x.Lesson)
                 .Select(x => x.ToTrueScheduleModel())
@@ -44,6 +46,9 @@ namespace StudentsSystem
         {
             var group = _cache.GetGroup(groupId);
             var trueSchedules = group.TrueSchedules;
+            
+            if (request.Any(x => x.Date < DateTime.Today) || request.Any(x => x.Date == DateTime.Today) && group.Attendance.Any(x => x.Date == DateTime.Today))
+                Errors.AttemptToChangeFixedScheduleError.Throw(StatusCodes.Status403Forbidden);
             
             foreach (var day in request)
             {

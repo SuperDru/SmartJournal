@@ -25,7 +25,7 @@ namespace StudentsSystem
         /// </summary>
         [HttpGet("{userId:Guid}")]
         public UserResponse GetUser([FromRoute] Guid userId) =>
-            _cache.GetUser(userId).ToUserResponse();
+            _cache.GetExistingUser(userId).ToUserResponse();
 
         /// <summary>
         /// Returns list of users
@@ -42,6 +42,13 @@ namespace StudentsSystem
         public async Task<UserResponse> CreateUser([FromBody] UserModel request)
         {
             var user = request.ToUser();
+            
+            if (_cache.GetUsers().Any(x => x.Email == user.Email))
+                Errors.UserWithThisEmailExistsError.Throw(StatusCodes.Status403Forbidden);
+            
+            if (_cache.GetUsers().Any(x => x.PhoneNumber == user.PhoneNumber))
+                Errors.UserWithThisPhoneExistsError.Throw(StatusCodes.Status403Forbidden);
+            
             await _cache.AddUser(user);
             
             return _cache.GetUser(user.Guid).ToUserResponse();
@@ -54,8 +61,14 @@ namespace StudentsSystem
         [HttpPut("{userId:Guid}")]
         public async Task<UserResponse> UpdateUser([FromRoute] Guid userId, [FromBody] UserModel request)
         {
-            var user = _cache.GetUser(userId);
+            var user = _cache.GetExistingUser(userId);
 
+            if (user.Email != request.Email && _cache.GetUsers().Any(x => x.Email == request.Email))
+                Errors.UserWithThisEmailExistsError.Throw(StatusCodes.Status403Forbidden);
+            
+            if (user.PhoneNumber != request.PhoneNumber && _cache.GetUsers().Any(x => x.PhoneNumber == request.PhoneNumber))
+                Errors.UserWithThisPhoneExistsError.Throw(StatusCodes.Status403Forbidden);
+            
             await _cache.AddOrUpdateUser(request.ToUser(user));
             
             return _cache.GetUser(user.Guid).ToUserResponse();
@@ -65,8 +78,12 @@ namespace StudentsSystem
         /// Deletes the users with {userId}
         /// </summary>
         [HttpDelete("{userId:Guid}")]
-        public async Task DeleteUser([FromRoute] Guid userId) =>
+        public async Task DeleteUser([FromRoute] Guid userId)
+        {
+            // Check that user exists
+            _cache.GetExistingUser(userId);
             await _cache.RemoveUser(userId);
+        }
 
         /// <summary>
         /// Adds user with {userId} or users with {userIds} to group with {groupId}
@@ -77,7 +94,7 @@ namespace StudentsSystem
             if (request.UserId == null && request.UserIds == null)
                 Errors.ValidationError("Fields UserId or UserIds must not be null.").Throw(StatusCodes.Status400BadRequest);
             
-            var group = _cache.GetGroup(request.GroupId);
+            var group = _cache.GetExistingGroup(request.GroupId);
 
             if (request.UserId != null && request.UserIds == null)
                 request.UserIds = new List<Guid> {request.UserId.Value};
@@ -85,8 +102,11 @@ namespace StudentsSystem
             // ReSharper disable once PossibleNullReferenceException
             foreach (var userId in request.UserIds)
             {
-                var user = _cache.GetUser(userId);
+                var user = _cache.GetExistingUser(userId);
             
+                if (user.Groups.Any(x => x.GroupId == group.Id && x.UserId == user.Id))
+                    Errors.UserAlreadyAssignedToGroupError(user).Throw(StatusCodes.Status403Forbidden);
+                
                 user.Groups.Add(new UserGroup
                 {
                     GroupId = group.Id,
@@ -106,7 +126,7 @@ namespace StudentsSystem
             if (request.UserId == null && request.UserIds == null)
                 Errors.ValidationError("Fields UserId or UserIds must not be null.").Throw(StatusCodes.Status400BadRequest);
             
-            var group = _cache.GetGroup(request.GroupId);
+            var group = _cache.GetExistingGroup(request.GroupId);
             
             if (request.UserId != null && request.UserIds == null)
                 request.UserIds = new List<Guid> {request.UserId.Value};
@@ -114,12 +134,14 @@ namespace StudentsSystem
             // ReSharper disable once PossibleNullReferenceException
             foreach (var userId in request.UserIds)
             {
-                var user = _cache.GetUser(userId);
+                var user = _cache.GetExistingUser(userId);
+                
+                if (user.Groups.All(x => !(x.GroupId == group.Id && x.UserId == user.Id)))
+                    Errors.UserAlreadyRemovedFromGroupError(user).Throw(StatusCodes.Status403Forbidden);
                 
                 user.Groups.RemoveAll(x => x.GroupId == group.Id && x.UserId == user.Id); 
             }
-
-
+            
             await _cache.UpdateUsers();
         }
     }

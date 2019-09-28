@@ -5,8 +5,13 @@ namespace StudentsSystem
 {
     public static class UserMapExtensions
     {
-        public static UserResponse ToUserResponse(this User source) =>
-            new UserResponse
+        public static UserResponse ToUserResponse(this User source)
+        {
+            var acc = source.Account;
+            var amount = acc.Amount > 0 ? acc.Amount : 0;
+            var dept = acc.Dept - acc.Amount;
+            
+            return new UserResponse
             {
                 Guid = source.Guid,
                 Name = source.Name,
@@ -15,9 +20,10 @@ namespace StudentsSystem
                 Patronymic = source.Patronymic,
                 PhoneNumber = source.PhoneNumber,
                 UpdatedAt = source.Account.UpdatedAt,
-                Amount = source.Account.Amount,
-                Dept = source.Account.Dept,
+                Amount = amount,
+                Dept = dept,
             };
+        }
 
         public static User ToUser(this UserModel source, User target = null)
         {

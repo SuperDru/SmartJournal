@@ -14,5 +14,15 @@ namespace Storage
 
             return group;
         }
+        
+        public static User GetExistingUser(this IDatabaseCache cache, Guid userId)
+        {
+            var user = cache.GetUser(userId);
+            
+            if (user == null)
+                Errors.UserNotFoundError.Throw(StatusCodes.Status404NotFound);
+
+            return user;
+        }
     }
 }

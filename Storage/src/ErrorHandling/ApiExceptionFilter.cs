@@ -29,7 +29,7 @@ namespace Storage
                 StatusCode = StatusCodes.Status500InternalServerError
             };
             
-            Log.Information(ex.Message);
+            Log.Error(ex.StackTrace);
         }
     }
 
