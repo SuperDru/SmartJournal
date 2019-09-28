@@ -9,7 +9,7 @@ namespace StudentsSystem
         {
             var acc = source.Account;
             var amount = acc.Amount > 0 ? acc.Amount : 0;
-            var dept = acc.Dept - acc.Amount;
+            var dept = acc.Dept - acc.Amount > 0 ? acc.Dept - acc.Amount : 0;
             
             return new UserResponse
             {
