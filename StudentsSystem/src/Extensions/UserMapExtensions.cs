@@ -7,10 +7,6 @@ namespace StudentsSystem
     {
         public static UserResponse ToUserResponse(this User source)
         {
-            var acc = source.Account;
-            var amount = acc.Amount > 0 ? acc.Amount : 0;
-            var dept = acc.Dept - acc.Amount > 0 ? acc.Dept - acc.Amount : 0;
-            
             return new UserResponse
             {
                 Guid = source.Guid,
@@ -18,10 +14,7 @@ namespace StudentsSystem
                 Email = source.Email,
                 Surname = source.Surname,
                 Patronymic = source.Patronymic,
-                PhoneNumber = source.PhoneNumber,
-                UpdatedAt = source.Account.UpdatedAt,
-                Amount = amount,
-                Dept = dept,
+                PhoneNumber = source.PhoneNumber
             };
         }
 

@@ -73,5 +73,21 @@ namespace AttendanceAndPayments
             await _account.Deposit(userId, -payment.Amount);
             await _cache.AddOrUpdateUser(user);
         }
+
+        [HttpGet("account")]
+        public AccountResponse GetAccount([FromRoute] Guid userId)
+        {
+            var acc = _cache.GetExistingUser(userId).Account;
+            var amount = acc.Amount > 0 ? acc.Amount : 0;
+            var dept = acc.Dept - acc.Amount > 0 ? acc.Dept - acc.Amount : 0;
+            
+            return new AccountResponse
+            {
+                UserId = userId,
+                Amount = amount,
+                Dept = dept,
+                UpdatedAt = acc.UpdatedAt
+            };
+        }
     }
 }

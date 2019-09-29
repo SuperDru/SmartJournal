@@ -13,7 +13,7 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace AttendanceAndPayments
 {
-    public class Startup
+    public class AttpaymStartup
     {
         public void ConfigureServices(IServiceCollection services)
         {

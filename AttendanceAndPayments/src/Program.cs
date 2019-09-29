@@ -21,6 +21,6 @@ namespace AttendanceAndPayments
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .AddDatabase()
-                .UseStartup<Startup>();
+                .UseStartup<AttpaymStartup>();
     }
 }
