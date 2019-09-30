@@ -34,6 +34,7 @@ namespace StudentsSystem
             var group = _cache.GetExistingGroup(groupId);
             return group.TrueSchedules
                 .Where(x => x.Date >= from && x.Date <= to && x.Lesson)
+                .OrderBy(x => x.Date)
                 .Select(x => x.ToTrueScheduleModel())
                 .ToList();
         }
