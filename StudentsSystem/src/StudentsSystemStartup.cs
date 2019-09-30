@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using StudentsSystem;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
-using Storage;
+using Common;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace StudentsSystem
@@ -24,6 +25,9 @@ namespace StudentsSystem
 
             services.AddHostedService<ScheduleUpdateHostedService>();
             services.AddCors();
+            
+            services.AddScoped<IAccountManagementService, AccountManagementService>();
+            services.AddScoped<IAttendanceService, AttendanceService>();
             
             services.AddSwaggerGen();
             services.ConfigureSwaggerGen(options =>

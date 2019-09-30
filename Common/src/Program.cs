@@ -1,11 +1,9 @@
 ﻿using System.IO;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Common;
 
-namespace StudentsSystem
+namespace Common
 {
     public class Program
     {
@@ -17,6 +15,6 @@ namespace StudentsSystem
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) => 
             WebHost.CreateDefaultBuilder(args)
                 .AddDatabase()
-                .UseStartup<StudentsSystemStartup>();
+                .UseStartup<CommonStartup>();
     }
 }

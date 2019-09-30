@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using Storage;
+using Common;
 
 namespace StudentsSystem
 {
