@@ -62,7 +62,7 @@ namespace StudentsSystem
                 var newDays = userAttendance.UpdatedAttendance.OrderBy(d => d.Date).ToList();
 
                 var oldDays = user.Attendance
-                    .Where(a => a.Date >= newDays.First().Date && a.Date <= newDays.Last().Date)
+                    .Where(a => a.Date >= newDays.FirstOrDefault()?.Date && a.Date <= newDays.LastOrDefault()?.Date)
                     .ToDictionary(od => od.Date, od => od);
 
                 foreach (var newDay in newDays)
