@@ -80,7 +80,12 @@ namespace StudentsSystem
                     else if (oldDay != null && !newDay.IsAttended)
                     {
                         user.Attendance.Remove(oldDay);
-                        deptChanges[user.Id] = deptChanges.ContainsKey(user.Id) ?  deptChanges[user.Id] - oldDay.PaymentAmount : -oldDay.PaymentAmount;
+                        if (oldDay.PaymentAmount > 0)
+                        {
+                            await _account.Deposit(user.Guid, oldDay.PaymentAmount);
+                            oldDay.PaymentAmount = 0;
+                        }
+                        deptChanges[user.Id] = deptChanges.ContainsKey(user.Id) ? deptChanges[user.Id] + oldDay.PaymentAmount : oldDay.PaymentAmount;
                     }
                 }
             }
@@ -97,7 +102,16 @@ namespace StudentsSystem
                 var user = _cache.GetUser(userId);
 
                 var curAmount = amount;
-                var notPaidAttendance = user.Attendance.Where(x => x.PaymentAmount <= 0);
+
+                var att = user.Attendance.OrderBy(x => x.Date).ToList();
+                var firstNotPaid = att.FirstOrDefault(x => x.PaymentAmount <= 0);
+                foreach (var x in att.Where(x => x.Date > firstNotPaid?.Date && x.PaymentAmount > 0))
+                {
+                    curAmount += x.PaymentAmount;
+                    x.PaymentAmount = -x.PaymentAmount;
+                }
+
+                var notPaidAttendance = att.Where(x => x.PaymentAmount <= 0);
 
                 foreach (var day in notPaidAttendance)
                 {
