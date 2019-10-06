@@ -21,17 +21,6 @@ services:
           - postgres
         ports:
           - "8200:80"
-    frontend:
-        container_name: 'frontend'
-        image: frontend
-        build:
-          context: ./Frontend
-          dockerfile: Dockerfile
-        depends_on:
-          - postgres
-          - students-system
-        ports:
-          - "8100:80"
     balancer:
         container_name: 'balancer'
         image: balancer
