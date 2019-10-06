@@ -30,6 +30,5 @@ services:
         depends_on:
           - postgres
           - students-system
-          - frontend
         ports:
           - "80:80"
