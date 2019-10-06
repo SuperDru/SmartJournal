@@ -65,6 +65,11 @@ namespace Common
                     .WithOne(x => x.Group)
                     .HasForeignKey(x => x.GroupId)
                     .HasPrincipalKey(x => x.Id);
+
+                group.HasMany(g => g.Statistics)
+                    .WithOne(x => x.Group)
+                    .HasForeignKey(x => x.GroupId)
+                    .HasPrincipalKey(x => x.Id);
             });
 
             builder.Entity<UserRole>().HasOne(x => x.Role)
@@ -79,6 +84,7 @@ namespace Common
             builder.Entity<UserGroup>().HasKey(ug => new {ug.GroupId, ug.UserId});
             builder.Entity<UserRole>().HasKey(ur => new {ur.RoleId, ur.UserId});
             builder.Entity<WeekSchedule>().HasKey(w => w.GroupId);
+            builder.Entity<Statistics>().HasKey(s => new {s.GroupId, s.Date});
         }
     }
 }

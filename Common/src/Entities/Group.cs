@@ -24,5 +24,6 @@ namespace Common
         public List<UserGroup> Users { get; set; }
         public List<Attendance> Attendance { get; set; }
         public List<TrueSchedule> TrueSchedules { get; set; }
+        public List<Statistics> Statistics { get; set; }
     }
 }

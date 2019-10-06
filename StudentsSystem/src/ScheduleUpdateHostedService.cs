@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Common;
+using Serilog;
 
 namespace StudentsSystem
 {
@@ -31,6 +32,8 @@ namespace StudentsSystem
                 group.TrueSchedules.BuildSchedule(group.WeekSchedule);
                 group.TrueSchedules.RemoveAll(x => !x.Lesson && x.Date < DateTime.Today);
             }
+            
+            Log.Information($"Schedule updated, time: {DateTime.Now}");
 
             _cache.UpdateGroups();
         }

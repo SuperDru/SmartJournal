@@ -15,6 +15,8 @@ namespace Common
         public static readonly ApiError DayNotOnScheduleError = new ApiError(5001, "This day is not on schedule");
         
         public static readonly ApiError PaymentNotFoundError = new ApiError(6000, "Payment not found");
+        
+        public static readonly ApiError NotAllowedToGetCurrentMonthOrLaterStatistics = new ApiError(7000, "Attempt to get current month statistics or later");
 
         
         public static ApiError UserAlreadyAssignedToGroupError(User user) => new ApiError(3003, $"Student {user.Surname} {user.Password} already assigned to the group");

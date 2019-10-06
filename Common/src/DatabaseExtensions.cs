@@ -42,6 +42,7 @@ namespace Common
                 .Include(g => g.WeekSchedule)
                 .Include(g => g.Users)
                 .ThenInclude(x => x.User)
+                .Include(g => g.Statistics)
                 .Include(g => g.TrueSchedules);
     }
 }

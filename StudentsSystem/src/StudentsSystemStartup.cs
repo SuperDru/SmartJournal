@@ -22,10 +22,13 @@ namespace StudentsSystem
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 );
+            
+            services.AddCors();
 
             services.AddHostedService<ScheduleUpdateHostedService>();
-            services.AddCors();
-            
+            services.AddHostedService<StatisticsUpdateHostedService>();
+
+            services.AddSingleton<IStatisticsCalculationService, StatisticsCalculationService>();
             services.AddScoped<IAccountManagementService, AccountManagementService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
             
