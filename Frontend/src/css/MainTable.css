@@ -1,0 +1,21 @@
+.form__{
+    height:2rem;
+    width:2rem;
+}
+
+.input__{
+    height:2rem;
+    width:2rem;
+}
+
+.form-control{
+    width: 25rem;
+}
+
+.btn{
+    margin: 0.5rem;
+}
+
+.input{
+    width: 6.5rem;
+}

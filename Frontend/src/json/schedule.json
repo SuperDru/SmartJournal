@@ -1,0 +1,28 @@
+[{
+  "group": {
+    "number": 1,
+    "days": {
+      "mon": true,
+      "tues": false,
+      "wed": true,
+      "thurs": false,
+      "fri": false,
+      "sat": false,
+      "sun": false
+    }
+  }
+},
+  {
+    "group": {
+      "number": 2,
+      "days": {
+        "mon": false,
+        "tues": true,
+        "wed": false,
+        "thurs": false,
+        "fri": true,
+        "sat": false,
+        "sun": false
+      }
+    }
+  }]

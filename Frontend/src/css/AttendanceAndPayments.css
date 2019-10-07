@@ -1,0 +1,49 @@
+.cell {
+}
+
+.table th, .table td {
+    min-width: 50px;
+}
+
+.table__input {
+    max-width: 40px;
+}
+
+.table {
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer */
+    -khtml-user-select: none; /* KHTML browsers (e.g. Konqueror) */
+    -webkit-user-select: none; /* Chrome, Safari, and Opera */
+    -webkit-touch-callout: none; /* Disable Android and iOS callouts*/
+    max-width: 100%;
+}
+
+
+/*.table th:last-child{*/
+/*    border-right: none;*/
+/*}*/
+
+/*.table div:last-child{*/
+/*    border-right: none;*/
+/*}*/
+/*.cell_absent{*/
+/*    background-color: rgba(181,204,211,0.78);*/
+/*}*/
+
+/*.cell_attended{*/
+/*    background-color: rgba(50,163,211,0.78)*/
+/*    !*color: white;*!*/
+/*}*/
+
+/*.table__head_student {*/
+/*    min-width: 200px;*/
+/*}*/
+
+.table__button-add-payment {
+    /*background-color: white;*/
+    /*max-height: 30px;*/
+    /*min-width: 150px;*/
+    /*margin: 0 20px;*/
+    /*border: none;*/
+    /*border-right: none;*/
+}
