@@ -86,7 +86,6 @@ namespace Common
             builder.Entity<UserRole>().HasKey(ur => new {ur.RoleId, ur.UserId});
             builder.Entity<WeekSchedule>().HasKey(w => w.GroupId);
             builder.Entity<Statistics>().HasKey(s => new {s.GroupId, s.Date});
-            builder.Entity<AccountHistory>().HasKey(a => new {a.UserId, a.PerformedAt});
         }
     }
 }
