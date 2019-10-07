@@ -9,6 +9,7 @@ namespace Common
 
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups { get; set; }
+        public DbSet<Statistics> Statistics { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<TrueSchedule> TrueSchedule { get; set; }
         public DbSet<Account> Accounts { get; set; }
@@ -41,6 +42,11 @@ namespace Common
                 user.HasMany(u => u.Payments)
                     .WithOne(p => p.User)
                     .HasForeignKey(p => p.UserId)
+                    .HasPrincipalKey(u => u.Id);
+
+                user.HasMany(u => u.AccountHistory)
+                    .WithOne(x => x.User)
+                    .HasForeignKey(a => a.UserId)
                     .HasPrincipalKey(u => u.Id);
             });
 
@@ -85,6 +91,7 @@ namespace Common
             builder.Entity<UserRole>().HasKey(ur => new {ur.RoleId, ur.UserId});
             builder.Entity<WeekSchedule>().HasKey(w => w.GroupId);
             builder.Entity<Statistics>().HasKey(s => new {s.GroupId, s.Date});
+            builder.Entity<AccountHistory>().HasKey(a => new {a.UserId, a.PerformedAt});
         }
     }
 }
