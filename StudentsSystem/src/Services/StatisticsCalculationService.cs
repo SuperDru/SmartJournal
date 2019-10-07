@@ -36,7 +36,7 @@ namespace StudentsSystem
                 
                     var attendanceCount = group.Attendance.Count(x => x.Date.IsSameMonth(lastMonth));
                     var attendanceMax = group.TrueSchedules.Count(x => x.Date.IsSameMonth(lastMonth));
-                    var expectedIncome = group.Attendance.Where(x => x.Date.IsSameMonth(lastMonth)).Sum(x => x.PaymentAmount);
+                    var expectedIncome = group.Attendance.Where(x => x.Date.IsSameMonth(lastMonth)).Sum(x => MathF.Abs(x.PaymentAmount));
                 
                     statistics.Add(new Statistics
                     {
