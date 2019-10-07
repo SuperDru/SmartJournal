@@ -91,8 +91,8 @@ namespace StudentsSystem
         [HttpPost("assign")]
         public async Task AssignUserToGroup([FromBody] AssignUserToGroupRequest request)
         {
-            if (request.UserId == null && request.UserIds == null)
-                Errors.ValidationError("Fields UserId or UserIds must not be null.").Throw(StatusCodes.Status400BadRequest);
+            if (request.UserId == null && request.UserIds == null || request.UserIds != null && request.UserIds.Count == 0)
+                Errors.ValidationError("Fields UserId or UserIds must not be null or empty.").Throw(StatusCodes.Status400BadRequest);
             
             var group = _cache.GetExistingGroup(request.GroupId);
 
@@ -107,24 +107,30 @@ namespace StudentsSystem
                 if (user.Groups.Any(x => x.GroupId == group.Id && x.UserId == user.Id))
                     Errors.UserAlreadyAssignedToGroupError(user).Throw(StatusCodes.Status403Forbidden);
                 
-                user.Groups.Add(new UserGroup
+                group.Users.Add(new UserGroup
                 {
-                    GroupId = group.Id,
                     UserId = user.Id
-                });   
+                });
             }
 
-            await _cache.UpdateUsers();
+            try
+            {
+                await _cache.UpdateGroups();
+            }
+            catch (Exception e)
+            {
+                // ignored
+            }
         }
 
         /// <summary>
         /// Removes user with {userId} or users with {userIds} from group with {groupId}
         /// </summary>
         [HttpDelete("assign")]
-        public async Task RemoveUserFromGroup([FromBody] AssignUserToGroupRequest request)
+        public async Task RemoveUserFromGroup([FromBody] AssignUserToGroupRequest request, [FromServices] DatabaseContext db)
         {
-            if (request.UserId == null && request.UserIds == null)
-                Errors.ValidationError("Fields UserId or UserIds must not be null.").Throw(StatusCodes.Status400BadRequest);
+            if (request.UserId == null && request.UserIds == null || request.UserIds != null && request.UserIds.Count == 0)
+                Errors.ValidationError("Fields UserId or UserIds must not be null or empty.").Throw(StatusCodes.Status400BadRequest);
             
             var group = _cache.GetExistingGroup(request.GroupId);
             
