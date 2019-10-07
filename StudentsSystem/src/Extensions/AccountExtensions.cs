@@ -6,7 +6,7 @@ namespace StudentsSystem
 {
     public static class AccountExtensions
     {
-        public static async Task Transform(this IDatabaseCache cache, IDictionary<int, float> deptChanges)
+        public static async Task Transform(this ICacheRepository cache, IDictionary<int, float> deptChanges)
         {
             foreach (var (userId, amount) in deptChanges)
             {

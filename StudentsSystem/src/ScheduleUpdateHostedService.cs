@@ -3,58 +3,35 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Common;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace StudentsSystem
 {
-    public class ScheduleUpdateHostedService: IHostedService, IDisposable
+    public class ScheduleUpdateHostedService: IHostedService
     {
-        private readonly IDatabaseCache _cache;
-        private Timer _timer;
-
-        private DateTime _current;
+        private readonly IServiceProvider _provider;
         
-        public ScheduleUpdateHostedService(IDatabaseCache cache)
+        public ScheduleUpdateHostedService(IServiceProvider provider)
         {
-            _cache = cache;
-            _current = DateTime.Today.AddDays(-1);
-        }
-
-        private void UpdateSchedule(object state)
-        {
-            if (DateTime.Now.Day == _current.Day) return;
-            
-            _current = _current.AddDays(1);
-            var groups = _cache.GetGroups();
-
-            foreach (var group in groups)
-            {
-                group.TrueSchedules.BuildSchedule(group.WeekSchedule);
-                group.TrueSchedules.RemoveAll(x => !x.Lesson && x.Date < DateTime.Today);
-            }
-            
-            Log.Information($"Schedule updated, time: {DateTime.Now}");
-
-            _cache.UpdateGroups();
+            _provider = provider;
         }
         
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(UpdateSchedule, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+            using (var scope = _provider.CreateScope())
+            {
+                var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IScheduleUpdateScopedService>();
+
+                scopedProcessingService.StartUpdate();
+            }
             
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Change(Timeout.Infinite, 0);
-
             return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer.Dispose();
         }
     }
 }

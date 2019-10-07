@@ -5,7 +5,7 @@ namespace Common
 {
     public static class RepositoryExtensions
     {
-        public static Group GetExistingGroup(this IDatabaseCache cache, Guid groupId)
+        public static Group GetExistingGroup(this ICacheRepository cache, Guid groupId)
         {
             var group = cache.GetGroup(groupId);
             
@@ -15,7 +15,7 @@ namespace Common
             return group;
         }
         
-        public static User GetExistingUser(this IDatabaseCache cache, Guid userId)
+        public static User GetExistingUser(this ICacheRepository cache, Guid userId)
         {
             var user = cache.GetUser(userId);
             

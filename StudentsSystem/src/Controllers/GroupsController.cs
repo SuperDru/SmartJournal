@@ -12,10 +12,10 @@ namespace StudentsSystem
     [Route("/groups")]
     public class GroupsController: Controller
     {
-        private readonly IDatabaseCache _cache;
+        private readonly ICacheRepository _cache;
 
         /// <inheritdoc />
-        public GroupsController(IDatabaseCache cache)
+        public GroupsController(ICacheRepository cache)
         {
             _cache = cache;
         }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace StudentsSystem
 {
@@ -12,38 +13,42 @@ namespace StudentsSystem
     
     public class StatisticsCalculationService: IStatisticsCalculationService
     {
-        private readonly IDatabaseCache _cache;
+        private readonly IServiceProvider _provider;
 
-        public StatisticsCalculationService(IDatabaseCache cache)
+        public StatisticsCalculationService(IServiceProvider provider)
         {
-            _cache = cache;
+            _provider = provider;
         }
         
         public async Task BuildStatistics(DateTime month)
         {
-            var groups = _cache.GetGroups();
-            var lastMonth = DateTime.Today.AddMonths(-1);
-            lastMonth = lastMonth.AddDays(- lastMonth.Day + 1);
-            
-            foreach (var group in groups)
+            using (var scope = _provider.CreateScope())
             {
-                var statistics = group.Statistics;
+                var cache = scope.ServiceProvider.GetService<ICacheRepository>();
                 
-                var attendanceCount = group.Attendance.Count(x => x.Date.IsSameMonth(lastMonth));
-                var attendanceMax = group.TrueSchedules.Count(x => x.Date.IsSameMonth(lastMonth));
-                var expectedIncome = group.Attendance.Where(x => x.Date.IsSameMonth(lastMonth)).Sum(x => x.PaymentAmount);
-                
-                statistics.Add(new Statistics
+                var groups = cache.GetGroups();
+                var lastMonth = DateTime.Today.AddMonths(-1);
+                lastMonth = lastMonth.AddDays(- lastMonth.Day + 1);
+            
+                foreach (var group in groups)
                 {
-                    Date = lastMonth,
-                    AttendancePercentage = attendanceCount * 100 / attendanceMax,
-                    PeopleAmount = group.Users.Count,
-                    VisitsAmount = attendanceCount,
-                    ExpectedIncome = expectedIncome
-                });
+                    var statistics = group.Statistics;
+                
+                    var attendanceCount = group.Attendance.Count(x => x.Date.IsSameMonth(lastMonth));
+                    var attendanceMax = group.TrueSchedules.Count(x => x.Date.IsSameMonth(lastMonth));
+                    var expectedIncome = group.Attendance.Where(x => x.Date.IsSameMonth(lastMonth)).Sum(x => x.PaymentAmount);
+                
+                    statistics.Add(new Statistics
+                    {
+                        Date = lastMonth,
+                        AttendancePercentage = attendanceCount * 100 / attendanceMax,
+                        PeopleAmount = group.Users.Count,
+                        VisitsAmount = attendanceCount,
+                        ExpectedIncome = expectedIncome
+                    });
+                }
+                await cache.UpdateGroups();
             }
-            await _cache.UpdateGroups();
-
         }
     }
 }

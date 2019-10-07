@@ -31,6 +31,7 @@ namespace StudentsSystem
             services.AddSingleton<IStatisticsCalculationService, StatisticsCalculationService>();
             services.AddScoped<IAccountManagementService, AccountManagementService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
+            services.AddScoped<IScheduleUpdateScopedService, ScheduleUpdateScopedService>();
             
             services.AddSwaggerGen();
             services.ConfigureSwaggerGen(options =>

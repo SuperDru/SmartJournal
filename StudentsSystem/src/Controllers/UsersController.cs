@@ -12,10 +12,10 @@ namespace StudentsSystem
     [Route("/users")]
     public class UsersController: Controller
     {
-        private readonly IDatabaseCache _cache;
+        private readonly ICacheRepository _cache;
 
         /// <inheritdoc />
-        public UsersController(IDatabaseCache cache)
+        public UsersController(ICacheRepository cache)
         {
             _cache = cache;
         }

@@ -12,12 +12,12 @@ namespace StudentsSystem
     [Route("payments/{userId:Guid}")]
     public class PaymentsController: Controller
     {
-        private readonly IDatabaseCache _cache;
+        private readonly ICacheRepository _cache;
         private readonly IAccountManagementService _account;
         private readonly IAttendanceService _attendanceService;
 
         /// <inheritdoc />
-        public PaymentsController(IDatabaseCache cache, IAccountManagementService account, IAttendanceService attendanceService)
+        public PaymentsController(ICacheRepository cache, IAccountManagementService account, IAttendanceService attendanceService)
         {
             _account = account;
             _cache = cache;

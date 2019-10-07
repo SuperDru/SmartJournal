@@ -12,9 +12,9 @@ namespace StudentsSystem
     
     public class AccountManagementService: IAccountManagementService
     {
-        private readonly IDatabaseCache _cache;
+        private readonly ICacheRepository _cache;
 
-        public AccountManagementService(IDatabaseCache cache)
+        public AccountManagementService(ICacheRepository cache)
         {
             _cache = cache;
         }

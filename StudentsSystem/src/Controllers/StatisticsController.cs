@@ -11,10 +11,10 @@ namespace StudentsSystem
     [Route("statistics")]
     public class StatisticsController: Controller
     {
-        private readonly IDatabaseCache _cache;
+        private readonly ICacheRepository _cache;
         private readonly IStatisticsCalculationService _statisticsCalculation;
 
-        public StatisticsController(IDatabaseCache cache, IStatisticsCalculationService statisticsCalculation)
+        public StatisticsController(ICacheRepository cache, IStatisticsCalculationService statisticsCalculation)
         {
             _cache = cache;
             _statisticsCalculation = statisticsCalculation;

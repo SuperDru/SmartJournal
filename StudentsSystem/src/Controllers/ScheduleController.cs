@@ -13,10 +13,10 @@ namespace StudentsSystem
     [Route("/schedule/{groupId:Guid}")]
     public class ScheduleController: Controller
     {
-        private readonly IDatabaseCache _cache;
+        private readonly ICacheRepository _cache;
 
         /// <inheritdoc />
-        public ScheduleController(IDatabaseCache cache)
+        public ScheduleController(ICacheRepository cache)
         {
             _cache = cache;
         }

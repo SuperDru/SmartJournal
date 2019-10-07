@@ -16,10 +16,10 @@ namespace StudentsSystem
     
     public class AttendanceService: IAttendanceService
     {
-        private readonly IDatabaseCache _cache;
+        private readonly ICacheRepository _cache;
         private readonly IAccountManagementService _account;
 
-        public AttendanceService(IDatabaseCache cache, IAccountManagementService account)
+        public AttendanceService(ICacheRepository cache, IAccountManagementService account)
         {
             _cache = cache;
             _account = account;
