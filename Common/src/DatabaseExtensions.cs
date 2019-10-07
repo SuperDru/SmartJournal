@@ -41,6 +41,7 @@ namespace Common
         public static IIncludableQueryable<Group, List<TrueSchedule>> GetGroupsWithIncludes(this DatabaseContext db) =>
             db.Groups
                 .Include(g => g.WeekSchedule)
+                .Include(g => g.Attendance)
                 .Include(g => g.Users)
                 .ThenInclude(x => x.User)
                 .Include(g => g.Statistics)

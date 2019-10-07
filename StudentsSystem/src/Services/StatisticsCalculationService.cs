@@ -41,7 +41,7 @@ namespace StudentsSystem
                     statistics.Add(new Statistics
                     {
                         Date = lastMonth,
-                        AttendancePercentage = attendanceCount * 100 / attendanceMax,
+                        AttendancePercentage = attendanceMax == 0 ? 100 : attendanceCount * 100 / attendanceMax,
                         PeopleAmount = group.Users.Count,
                         VisitsAmount = attendanceCount,
                         ExpectedIncome = expectedIncome
