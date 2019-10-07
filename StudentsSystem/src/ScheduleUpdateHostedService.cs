@@ -17,16 +17,14 @@ namespace StudentsSystem
             _provider = provider;
         }
         
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             using (var scope = _provider.CreateScope())
             {
                 var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IScheduleUpdateScopedService>();
 
-                scopedProcessingService.StartUpdate();
+                await scopedProcessingService.StartUpdate(cancellationToken);
             }
-            
-            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

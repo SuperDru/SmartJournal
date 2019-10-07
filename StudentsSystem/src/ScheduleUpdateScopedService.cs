@@ -8,7 +8,7 @@ namespace StudentsSystem
 {
     public interface IScheduleUpdateScopedService
     {
-        Task StartUpdate();
+        Task StartUpdate(CancellationToken token);
     }
     
     public class ScheduleUpdateScopedService: IScheduleUpdateScopedService
@@ -42,12 +42,12 @@ namespace StudentsSystem
             await _cache.UpdateGroups();
         }
         
-        public async Task StartUpdate()
+        public async Task StartUpdate(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 await UpdateSchedule();
-                Thread.Sleep(10 * 1000);
+                await Task.Delay(10 * 1000, token);
             }
         }
     }
