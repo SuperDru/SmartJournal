@@ -50,11 +50,11 @@ namespace StudentsSystem
         /// Builds statistics at {monthDate} month (only for Development mode)
         /// </summary>
         [HttpPost]
-        public async Task BuildStatistics([FromQuery] DateTime monthDate)
+        public async Task BuildStatistics([FromQuery] DateTime monthDate, [FromServices] DatabaseContext db)
         {
-            if (!monthDate.EarlierThisMonth(DateTime.Today))
-                Errors.NotAllowedToGetCurrentMonthOrLaterStatistics.Throw(StatusCodes.Status403Forbidden);
-
+            db.Statistics.RemoveRange(db.Statistics.Where(x => x.Date == monthDate));
+            await db.SaveChangesAsync();
+            
             await _statisticsCalculation.BuildStatistics(monthDate);
         }
     }
