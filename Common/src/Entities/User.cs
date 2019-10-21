@@ -28,6 +28,7 @@ namespace Common
 
 
         public Account Account { get; set; }
+        public List<AccountHistory> AccountHistory { get; set; }
         public List<UserGroup> Groups { get; set; }
         public List<UserRole> Roles { get; set; }
         public List<Attendance> Attendance { get; set; }

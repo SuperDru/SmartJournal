@@ -15,13 +15,15 @@ namespace StudentsSystem
         private readonly ICacheRepository _cache;
         private readonly IAccountManagementService _account;
         private readonly IAttendanceService _attendanceService;
+        private readonly IAccountHistoryWatcher _accountWatcher;
 
         /// <inheritdoc />
-        public PaymentsController(ICacheRepository cache, IAccountManagementService account, IAttendanceService attendanceService)
+        public PaymentsController(ICacheRepository cache, IAccountManagementService account, IAttendanceService attendanceService, IAccountHistoryWatcher accountWatcher)
         {
             _account = account;
             _cache = cache;
             _attendanceService = attendanceService;
+            _accountWatcher = accountWatcher;
         }
 
         /// <summary>
@@ -48,6 +50,8 @@ namespace StudentsSystem
             var user = _cache.GetExistingUser(userId);
             var payment = request.ToPayment();
             
+            _accountWatcher.StartWatch(new List<Guid> {user.Guid}, OperationType.Payment);
+            
             user.Payments.Add(payment);
             
             await _account.Deposit(userId, payment.Amount);
@@ -55,6 +59,8 @@ namespace StudentsSystem
 
             await _attendanceService.Transform(await _account.Notify(new[] { user.Id }));
 
+            await _accountWatcher.StopWatch();
+            
             return payment.Guid;
         }
         
@@ -71,11 +77,15 @@ namespace StudentsSystem
             if (payment == null)
                 Errors.PaymentNotFoundError.Throw(StatusCodes.Status404NotFound);
             
+            _accountWatcher.StartWatch(new List<Guid> {user.Guid}, OperationType.Cancel );
+            
             user.Payments.Remove(payment);
             
             // ReSharper disable once PossibleNullReferenceException
             await _account.Deposit(userId, -payment.Amount);
             await _cache.AddOrUpdateUser(user);
+
+            await _accountWatcher.StopWatch();
         }
     }
 }

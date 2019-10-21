@@ -3,15 +3,17 @@ using System;
 using Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Common.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20191007210545_AddAccountHistory")]
+    partial class AddAccountHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,11 +48,14 @@ namespace Common.Migrations
                     b.Property<DateTime>("PerformedAt")
                         .HasColumnName("performed_at");
 
-                    b.Property<float>("DiffAmount")
-                        .HasColumnName("diff_amount");
+                    b.Property<float>("Diff")
+                        .HasColumnName("diff");
 
                     b.Property<float>("NewAmount")
                         .HasColumnName("new_amount");
+
+                    b.Property<float>("NewDept")
+                        .HasColumnName("new_dept");
 
                     b.Property<int>("Type")
                         .HasColumnName("type");

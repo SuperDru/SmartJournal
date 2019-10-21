@@ -32,6 +32,7 @@ namespace Common
             db.Users
                 .Include(u => u.Account)
                 .Include(u => u.Payments)
+                .Include(u => u.AccountHistory)
                 .Include(u => u.Roles)
                 .ThenInclude(ur => ur.Role)
                 .Include(u => u.Groups)
