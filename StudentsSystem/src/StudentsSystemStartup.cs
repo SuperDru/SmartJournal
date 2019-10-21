@@ -32,6 +32,7 @@ namespace StudentsSystem
             services.AddScoped<IAccountManagementService, AccountManagementService>();
             services.AddScoped<IAttendanceService, AttendanceService>();
             services.AddScoped<IScheduleUpdateScopedService, ScheduleUpdateScopedService>();
+            services.AddScoped<IAccountHistoryWatcher, AccountHistoryWatcher>();
             
             services.AddSwaggerGen();
             services.ConfigureSwaggerGen(options =>
