@@ -117,7 +117,7 @@ namespace StudentsSystem
             {
                 await _cache.UpdateGroups();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ignored
             }
