@@ -52,6 +52,9 @@ namespace Common.Migrations
                     b.Property<float>("NewAmount")
                         .HasColumnName("new_amount");
 
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnName("payment_id");
+
                     b.Property<int>("Type")
                         .HasColumnName("type");
 
