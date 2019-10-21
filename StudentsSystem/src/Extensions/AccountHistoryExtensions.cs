@@ -10,7 +10,8 @@ namespace StudentsSystem
                 Type = source.Type,
                 DiffAmount = source.DiffAmount,
                 NewAmount = source.NewAmount,
-                PerformedAt = source.PerformedAt
+                PerformedAt = source.PerformedAt,
+                PaymentId = source.PaymentId
             };
     }
 }

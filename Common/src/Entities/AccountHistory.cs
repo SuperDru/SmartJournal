@@ -40,6 +40,8 @@ namespace Common
         public float DiffAmount { get; set; }
         [Column("new_amount")]
         public float NewAmount { get; set; }
+        [Column("payment_id")] 
+        public Guid? PaymentId { get; set; }
 
         public User User { get; set; }
     }

@@ -9,7 +9,7 @@ namespace StudentsSystem
     public interface IAccountHistoryWatcher
     {
         void StartWatch(ICollection<Guid> userIds, OperationType type);
-        Task StopWatch();
+        Task StopWatch(Guid? paymentId = null);
     }
     
     public class AccountHistoryWatcher: IAccountHistoryWatcher
@@ -41,7 +41,7 @@ namespace StudentsSystem
             }
         }
 
-        public async Task StopWatch()
+        public async Task StopWatch(Guid? paymentId = null)
         {
             var date = DateTime.Now;
             
@@ -63,6 +63,7 @@ namespace StudentsSystem
                     Type = _type,
                     DiffAmount = userAmount - _startAmounts[id],
                     NewAmount = userAmount,
+                    PaymentId = paymentId
                 });
             }
 

@@ -9,5 +9,6 @@ namespace StudentsSystem
         public OperationType Type { get; set; }
         public float DiffAmount { get; set; }
         public float NewAmount { get; set; }
+        public Guid? PaymentId { get; set; }
     }
 }

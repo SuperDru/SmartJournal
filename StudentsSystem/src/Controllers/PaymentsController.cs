@@ -59,7 +59,7 @@ namespace StudentsSystem
 
             await _attendanceService.Transform(await _account.Notify(new[] { user.Id }));
 
-            await _accountWatcher.StopWatch();
+            await _accountWatcher.StopWatch(payment.Guid);
             
             return payment.Guid;
         }
@@ -85,7 +85,7 @@ namespace StudentsSystem
             await _account.Deposit(userId, -payment.Amount);
             await _cache.AddOrUpdateUser(user);
 
-            await _accountWatcher.StopWatch();
+            await _accountWatcher.StopWatch(payment.Guid);
         }
     }
 }
