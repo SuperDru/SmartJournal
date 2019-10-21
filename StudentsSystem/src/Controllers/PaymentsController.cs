@@ -57,9 +57,14 @@ namespace StudentsSystem
             await _account.Deposit(userId, payment.Amount);
             await _cache.AddOrUpdateUser(user);
 
+            await _accountWatcher.StopWatch(payment.Guid);
+
+            
+            _accountWatcher.StartWatch(new List<Guid> {user.Guid}, OperationType.NewAttendanceDebit);
+
             await _attendanceService.Transform(await _account.Notify(new[] { user.Id }));
 
-            await _accountWatcher.StopWatch(payment.Guid);
+            await _accountWatcher.StopWatch();
             
             return payment.Guid;
         }
