@@ -26,10 +26,10 @@ namespace StudentsSystem
         {
             var user = _cache.GetExistingUser(userId);
             return user.AccountHistory
+                .OrderByDescending(x => x.PerformedAt)
                 .Skip(step * ShiftCount)
                 .Take(ShiftCount)
                 .Select(x => x.ToAccountHistoryResponse())
-                .OrderByDescending(x => x.PerformedAt)
                 .ToList();
         }
         
@@ -41,9 +41,9 @@ namespace StudentsSystem
         {
             var user = _cache.GetExistingUser(userId);
             return user.AccountHistory
+                .OrderByDescending(x => x.PerformedAt)
                 .Where(x => x.PerformedAt >= from && x.PerformedAt <= to)
                 .Select(x => x.ToAccountHistoryResponse())
-                .OrderByDescending(x => x.PerformedAt)
                 .ToList();
         }
     }
