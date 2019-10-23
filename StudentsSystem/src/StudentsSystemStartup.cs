@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using StudentsSystem;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Common;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace StudentsSystem
@@ -14,6 +17,13 @@ namespace StudentsSystem
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
+                o => o.Events.OnRedirectToLogin = s =>
+                {
+                    s.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                });
+            
             services.AddMvc(o =>
                 {
                     o.Filters.Add<ApiExceptionFilter>();
@@ -55,6 +65,8 @@ namespace StudentsSystem
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
+            
             app.UseSwagger();
             app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "Smart Journal Documentation"));
             

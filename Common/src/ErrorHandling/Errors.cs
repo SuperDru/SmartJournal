@@ -2,6 +2,8 @@ namespace Common
 {
     public static class Errors
     {
+        public static readonly ApiError PasswordIncorrectError = new ApiError(1001, "Password incorrect");
+
         public static readonly ApiError GroupNotFoundError = new ApiError(2000, "Group not found");
         public static readonly ApiError GroupWithThisNameExistsError = new ApiError(2001, "Group with this name already exists");
         

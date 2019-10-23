@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentsSystem
 {
-    /// <inheritdoc />
+    [Authorize]
     [Route("/schedule/{groupId:Guid}")]
     public class ScheduleController: Controller
     {
