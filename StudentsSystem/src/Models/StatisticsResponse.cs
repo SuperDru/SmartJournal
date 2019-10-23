@@ -7,6 +7,7 @@ namespace StudentsSystem
         public int PeopleAmount { get; set; }
         public int AttendancePercentage { get; set; }
         public int VisitsAmount { get; set; }
+        public int LessonsAmount { get; set; }
         public float ExpectedIncome { get; set; } 
         public DateTime Date { get; set; }
     }

@@ -46,6 +46,7 @@ namespace StudentsSystem
         {
             if (request.Payday == default)
                 request.Payday = DateTime.Now;
+            request.Payday = request.Payday.ToUniversalTime();
 
             var user = _cache.GetExistingUser(userId);
             var payment = request.ToPayment();

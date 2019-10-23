@@ -35,13 +35,14 @@ namespace StudentsSystem
                     var statistics = group.Statistics;
                 
                     var attendanceCount = group.Attendance.Count(x => x.Date.IsSameMonth(lastMonth));
-                    var attendanceMax = group.TrueSchedules.Count(x => x.Date.IsSameMonth(lastMonth));
+                    var attendanceMax = group.TrueSchedules.Count(x => x.Date.IsSameMonth(lastMonth)) * group.Users.Count;
                     var expectedIncome = group.Attendance.Where(x => x.Date.IsSameMonth(lastMonth)).Sum(x => MathF.Abs(x.PaymentAmount));
                 
                     statistics.Add(new Statistics
                     {
                         Date = lastMonth,
                         AttendancePercentage = attendanceMax == 0 ? 100 : attendanceCount * 100 / attendanceMax,
+                        LessonsAmount = attendanceMax,
                         PeopleAmount = group.Users.Count,
                         VisitsAmount = attendanceCount,
                         ExpectedIncome = expectedIncome

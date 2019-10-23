@@ -14,6 +14,8 @@ namespace Common
         public int AttendancePercentage { get; set; }
         [Column("visits_amount")]
         public int VisitsAmount { get; set; }
+        [Column("lessons_amount")]
+        public int LessonsAmount { get; set; }
         [Column("expected_income")]
         public float ExpectedIncome { get; set; }
         [Column("date")]
