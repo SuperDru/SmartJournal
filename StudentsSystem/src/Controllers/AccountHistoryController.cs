@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Common;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace StudentsSystem
 {
-    [Authorize]
     [Route("account/history")]
     public class AccountHistoryController: Controller
     {
