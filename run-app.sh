@@ -1,6 +1,6 @@
 #!/bin/bash
  
-cd ../Common
+cd Common
 
 dockerize -timeout 300s -wait-retry-interval 3s -wait tcp://postgres:5432 dotnet ef database update
 
