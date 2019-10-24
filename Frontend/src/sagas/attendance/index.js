@@ -18,14 +18,6 @@ function* callGetAttendance({groupId, from, to}) {
         console.log('saga-get-Attendance');
         let headers = new Headers();
         headers.append('Content-Type', "application/json");
-        // const attendance = yield call(() => fetch(url + "/attendance/" + groupId
-        //     + "?from=" + from + "&to=" + to,
-        //     {
-        //         method: "GET",
-        //         headers: headers
-        //     })
-        //     .then(res => res.json())
-        //     .catch(err => console.log(err)));
         const response = yield call(httpRequest, "get", url + "/attendance/" + groupId
             + "?from=" + from + "&to=" + to, headers);
         yield put({type: actionTypes.getAttendanceSucceededType, attendance: response.data})
@@ -45,12 +37,6 @@ function* callEditAttendance({groupId, data}) {
         let headers = new Headers();
         console.log("saga-edit-Attendance", data);
         headers.append('Content-Type', "application/json");//
-        // yield call(() => fetch(url + "/attendance/" + groupId,
-        //     {
-        //         method: 'PUT',
-        //         headers: headers,
-        //         body: JSON.stringify(data)
-        //     }).catch(error => console.log(error)));
         yield call(httpRequest, "put", url + "/attendance/" + groupId, headers, data);
         yield put({type: actionTypes.editAttendanceSucceededType})
     } catch (error) {

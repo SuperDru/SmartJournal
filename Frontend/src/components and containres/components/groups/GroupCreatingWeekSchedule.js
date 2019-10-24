@@ -1,8 +1,8 @@
 import React from "react"
 
 export const GroupCreatingWeekSchedule = (props) => {
-    console.log("week sch props", props);
-    return (<div>
+    // console.log("week sch props", props);
+    return (<div className="m-2">
         <div className="create-group__schedule-table">
             <table className='table table-striped table-bordered table-responsive-sm'>
                 <thead>
@@ -58,7 +58,7 @@ function renderStartTimeInputs(props) {
     for (let i = 0; i < 7; i++) {
         result.push(<td>
             <input
-                className="form-control cell"
+                className="form-control m-0"
                 type="time"
                 id={i + "stForm"}
                 name="startTimes"

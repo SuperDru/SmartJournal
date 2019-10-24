@@ -2,24 +2,37 @@ import React from "react"
 
 
 export const StatisticsTable = props => {
+    console.log(props);
     return (<div>
-        <table className="table table-responsive-sm table-striped table-primary">
+        <table className="table table-responsive-sm table-striped table-info">
             <thead>
-            <th>Группа</th>
-            <th>Кол-во человек</th>
-            <th>Кол-во почещений</th>
-            <th>Посещаемость, %</th>
-            <th>Ожид. доход</th>
+            <tr>
+                <th>Группа</th>
+                <th>Кол-во человек</th>
+                <th>Кол-во посещений</th>
+                <th>Посещаемость, %</th>
+                <th>Ожид. доход</th>
+            </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>{props.groupById.name}</td>
-                <td>{props.statistics.peopleAmount}</td>
-                <td>{props.statistics.visitsAmoun}</td>
-                <td>{props.statistics.attendancePercentage}</td>
-                <td>{props.statistics.expectedIncome}</td>
-            </tr>
+            {renderTableBody(props)}
             </tbody>
         </table>
     </div>)
+};
+
+
+function renderTableBody(props) {
+    let res = [];
+    props.groups.forEach(group => {
+        // console.log(group);
+        res.push(<tr>
+            <td>{group.name}</td>
+            <td>{group.peopleAmount}</td>
+            <td>{group.visitsAmount}</td>
+            <td>{group.attendancePercentage}</td>
+            <td>{group.expectedIncome}</td>
+        </tr>)
+    });
+    return res
 }

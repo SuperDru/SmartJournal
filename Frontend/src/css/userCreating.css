@@ -1,7 +1,20 @@
-.create-user{
-    /*padding: 1.5rem;*/
-    /*margin-right: 0;*/
-    /*margin-left: 0;*/
-    /*border-width: .2rem;*/
-    max-width: 30rem;
+/*.create-user {*/
+/*    !*padding: 1.5rem;*!*/
+/*    !*margin-right: 0;*!*/
+/*    !*margin-left: 0;*!*/
+/*    !*border-width: .2rem;*!*/
+/*    max-width: 30rem;*/
+/*}*/
+
+.user-creating {
+    width: 30rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    /*margin: 1rem auto;*/
+    margin-bottom: 1rem;
+}
+
+.user-creating__header {
+    margin: 1rem auto;
 }

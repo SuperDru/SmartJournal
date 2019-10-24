@@ -1,20 +1,62 @@
-﻿a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+﻿/*@import "~@material/animation/_functions.scss";*/
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
 }
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
+
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+.navbar {
+    background-color: white;
+    transition: top 0.2s ease-in-out;
+    /*animation: linear 1s;*/
+    /*transition: top 1s;*/
+}
+
+.active {
+    visibility: visible;
+    transition: all 300ms ease-in;
+}
+
+.hidden {
+    visibility: hidden;
+    transition: all 300ms ease-out;
+    transform: translate(0, -100%);
 }
 
 
+/*.nav-header {*/
+/*    transition: all 1s;*/
+/*}*/
+
+/*.nav-header {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    right: 0;*/
+/*    height: 64px;*/
+
+/*    transform: translate3d(0, 0, 0);*/
+/*    transition: mdc-animation-exit-temporary(transform, 250ms);*/
+/*    will-change: transform;*/
+
+/*    &.hidden {*/
+/*    transform: translate3d(0, -100%, 0);*/
+/*    transition: mdc-animation-enter(transform, 200ms);*/
+/*}*/
+
+/*}*/

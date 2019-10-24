@@ -2,6 +2,7 @@ import React, {Component} from "react"
 import {Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input} from "reactstrap";
 import ModalAskSchedule from "./ModalAskSchedule";
 
+
 class ModalSetStartTime extends Component {
 
     constructor(props) {
@@ -18,6 +19,7 @@ class ModalSetStartTime extends Component {
         this.onChange = this.onChange.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onDelete = this.onDelete.bind(this);
+        this.activeInput = React.createRef();
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -33,37 +35,25 @@ class ModalSetStartTime extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        // console.log(this.state.modals);
-        // console.log(prevState.modals);
-        // if (this.state.modals !== prevState.modals) {
-        // this.props.getNewScheduleDay(this.state.newSchedule);
-        // console.log(this.state.closeAll);
-        // console.log(prevState.closeAll);
-        // if (this.state.closeAll !== prevState.closeAll) {
-        // console.log("did update", this.state.modals !== prevState.modals);
-        // console.log("did update");
-        // console.log(this.state.toDelete && this.state.modals !== prevState.modals);
-        if (this.state.modal !== prevState.modal && this.state.closeAll) {
-            if (this.state.newStartTime) {
-                this.props.getNewStartTime({newStartTime: this.state.newStartTime, toDelete: this.state.toDelete});
-            } else {
-                this.props.getNewStartTime({newStartTime: this.state.oldStartTime, toDelete: this.state.toDelete});
+        if (this.state.modal !== prevState.modal) {
+            this.activeInput.focus();
+            if (this.state.closeAll) {
+                if (this.state.newStartTime) {
+                    this.props.getNewStartTime({newStartTime: this.state.newStartTime, toDelete: this.state.toDelete});
+                } else {
+                    this.props.getNewStartTime({newStartTime: this.state.oldStartTime, toDelete: this.state.toDelete});
+                }
+                this.props.toggleCallback(this.state.modal);
+                // this.setState({closeAll:!this.state.closeAll});
+            } else if (this.state.toDelete) {
+                if (this.state.newStartTime) {
+                    this.props.getNewStartTime({newStartTime: this.state.newStartTime, toDelete: this.state.toDelete});
+                } else {
+                    this.props.getNewStartTime({newStartTime: this.state.oldStartTime, toDelete: this.state.toDelete});
+                }
+                // this.props.toggleCallback(this.state.modals);
             }
-            this.props.toggleCallback(this.state.modal);
-            // this.setState({closeAll:!this.state.closeAll});
-        } else if (this.state.toDelete && this.state.modal !== prevState.modal) {
-            if (this.state.newStartTime) {
-                this.props.getNewStartTime({newStartTime: this.state.newStartTime, toDelete: this.state.toDelete});
-            } else {
-                this.props.getNewStartTime({newStartTime: this.state.oldStartTime, toDelete: this.state.toDelete});
-            }
-            // this.props.toggleCallback(this.state.modals);
         }
-        // console.log(this.state.toDelete && this.state.modals !== prevState.modals);
-
-        // if (this.state.closeAll !== prevState.closeAll) {
-        //     this.props.getNewStartTime({newStartTime: this.state.newStartTime, toDelete: this.state.toDelete});
-        // }
     }
 
     toggle() {
@@ -109,7 +99,10 @@ class ModalSetStartTime extends Component {
                     <FormGroup>
                         <Label for="startTime">Введите время начала занятия</Label>
                         <Input type="time" id="startTime" onChange={this.onChange}
-                               defaultValue={this.props.oldStartTime}/>
+                               defaultValue={this.props.oldStartTime}
+                               innerRef={input => {
+                                   this.activeInput = input
+                               }}/>
                     </FormGroup>
                     {this.props.oldStartTime ?
                         <Button color="danger" onClick={this.onDelete}>Удалить из расписания</Button> : null}

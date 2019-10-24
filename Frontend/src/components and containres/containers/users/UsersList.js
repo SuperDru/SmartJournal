@@ -27,19 +27,25 @@ class UsersList extends Component {
         console.log("render-users-list");
         console.log("props", this.props);
         return (
-            <div>
-                <h3>Студенты</h3>
-                <Search/>
-                {this.props.users ?
-                    this.props.users.map(user => (
-                        <div key={user.guid}>
-                            <h5><Link to={`/users/user_${user.guid}`}>{user.name} {user.surname}</Link></h5>
-                        </div>
-                    )) : <Spinner/>}
-                <Link to='/users/creating_user'
-                      className='btn btn-primary'
-                      onClick={this.addUser}>
-                    +Добавить ученика</Link>
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="main-container_large">
+                        <h3>Студенты</h3>
+                        <hr/>
+                        <Search/>
+                        <hr/>
+                        {this.props.isLoaded ?
+                            this.props.users.map(user => (
+                                <div key={user.guid}>
+                                    <h5><Link to={`/users/user_${user.guid}`}>{user.name} {user.surname}</Link></h5>
+                                </div>
+                            )) : <Spinner/>}
+                        <Link to='/users/creating_user'
+                              className='btn btn-primary'
+                              onClick={this.addUser}>
+                            <span className="oi oi-plus"/>Добавить ученика</Link>
+                    </div>
+                </div>
             </div>
         )
     }

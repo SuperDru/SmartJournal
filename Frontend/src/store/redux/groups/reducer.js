@@ -11,8 +11,8 @@ const initialState = {
     usersFromGroup: []
 };
 
-export const groupReducer = (state, action) => {
-    state = state || initialState;
+export const groupReducer = (state = initialState, action) => {
+    // state = state || initialState;
     // console.log(action.type);
     switch (action.type) {
         case actionTypes.getAllGroupsSucceededType:
@@ -27,12 +27,6 @@ export const groupReducer = (state, action) => {
                 isLoaded: false,
                 error: action.error
             };
-        // case actionTypes.createGroupType:
-        //     return {
-        //         ...state,
-        //         // isLoaded: false,
-        //         // onCreatingGroup: true
-        //     };
         case actionTypes.createGroupSubmitType:
             return {
                 ...state,

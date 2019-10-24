@@ -13,6 +13,7 @@ class ModalAddPayment extends Component {
         this.toggle = this.toggle.bind(this);
         this.onChange = this.onChange.bind(this);
         this.onSave = this.onSave.bind(this);
+        this.activeInput = React.createRef();
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -26,8 +27,10 @@ class ModalAddPayment extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        // this.activeInput.current.focus();
         if (this.state.modal !== prevState.modal) {
             // this.props.paymentModalCallback(this.state.sum);
+            this.activeInput.focus();
             this.props.paymentModalToggle(this.state.modal);
         }
     }
@@ -56,8 +59,16 @@ class ModalAddPayment extends Component {
                         <FormGroup>
                             <Label for="startTime">Введите нужную сумму в рублях</Label>
                             <Input type="number" id="startTime" onChange={this.onChange}
-                                // defaultValue={this.props.oldStartTime}
+                                   innerRef={input => {
+                                       this.activeInput = input
+                                   }}
+                                // ref={this.activeInput}
                             />
+                            {/*<input type="text" ref={input => {*/}
+                            {/*    this.activeInput = input*/}
+                            {/*}} onClick={() => {*/}
+                            {/*    console.log(this.activeInput)*/}
+                            {/*}}/>*/}
                         </FormGroup>
                     </ModalBody>
                     <ModalFooter>

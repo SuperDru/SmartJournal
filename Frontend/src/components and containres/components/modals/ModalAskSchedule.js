@@ -57,11 +57,9 @@ class ModalAskSchedule extends Component {
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary"
-                            onClick={this.toggleAll}
-                    >Да</Button>
+                            onClick={this.toggleAll}>Да</Button>
                     <Button color="secondary"
-                            onClick={this.toggle}
-                    >Нет</Button>
+                            onClick={this.toggle}>Нет</Button>
                 </ModalFooter>
             </Modal>
         )

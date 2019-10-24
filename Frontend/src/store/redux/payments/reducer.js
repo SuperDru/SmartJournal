@@ -1,11 +1,12 @@
 import {actionTypes} from "./actionTypes";
 
 const initialState = {
-    payments: []
+    payments: [],
+    isLoaded: false
 };
 
-export const paymentsReducer = (state, action) => {
-    state = state || initialState;
+export const paymentsReducer = (state = initialState, action) => {
+    // state = state || initialState;
     // console.log(action.type);
     switch (action.type) {
         case actionTypes.getPaymentsSucceededType:
@@ -17,7 +18,6 @@ export const paymentsReducer = (state, action) => {
         case actionTypes.getPaymentsFailedType:
             return {
                 ...state,
-                // isLoaded: false,
                 error: action.error
             };
         case actionTypes.addPaymentSucceededType:

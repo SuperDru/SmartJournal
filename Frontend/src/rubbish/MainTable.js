@@ -318,7 +318,7 @@ class MainTable extends Component {
                         this.initUserDays(user.user.attendance, user.user.id) :
                         this.editUserDays(user.user.attendance, user.user.id)}
                     <td>{user.user.account.amount}</td>
-                    <td>{user.user.account.dept}</td>
+                    {/*<td>{user.user.account.dept}</td>*/}
                 </tr>
             ))}
             </tbody>

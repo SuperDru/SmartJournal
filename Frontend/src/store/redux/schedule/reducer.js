@@ -9,11 +9,11 @@ const initialState = {
 };
 
 
-export const scheduleReducer = (state, action) => {//action.type===????
+export const scheduleReducer = (state = initialState, action) => {//action.type===????
     // console.log('scheduleReducer');
-    state = state || initialState;
+    // state = state || initialState;
 
-    console.log(action.type);
+    // console.log(action.type);
     switch (action.type) {
         case actionTypes.getScheduleSucceededType:
             return {

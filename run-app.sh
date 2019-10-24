@@ -1,8 +1,5 @@
 #!/bin/bash
  
-cd Configuration
-echo "{ \"ConnectionString\": \"Host=postgres;Port=5432;Database=smart_journal;Username=postgres;Password=mydb\" }" > DatabaseCfg.json
-
 cd ../Common
 
 dockerize -timeout 300s -wait-retry-interval 3s -wait tcp://postgres:5432 dotnet ef database update

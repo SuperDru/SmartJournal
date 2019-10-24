@@ -20,6 +20,11 @@ class Form extends Component {
         this.warningCallback = this.warningCallback.bind(this);
     }
 
+    // UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
+    //     if (nextProps.selectedMonth) {
+    //         this.setState({selectedMonth: nextProps.selectedMonth});
+    //     }
+    // }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.state.selectedGroupId !== prevState.selectedGroupId && this.state.selectedGroupId !== "Выберите группу") {
@@ -53,12 +58,6 @@ class Form extends Component {
                 tempMonth: new Date(e.target.value),
                 isWarningOpen: true
             })
-            //
-            // if (window.confirm("Внимание!!! Предыдущие действия не сохранятся! Вы уверены, что хотите продолжить?")) {
-            //     this.setState({
-            //         selectedMonth: new Date(e.target.value),
-            //     });
-            // }
         } else this.setState({
             selectedMonth: new Date(e.target.value),
         });
@@ -67,11 +66,6 @@ class Form extends Component {
     onSelectGroup(e) {
         let groupId = e.target.value;
         if (this.props.isEdit) {
-            // if (window.confirm("Внимание!!! Предыдущие действия не сохранятся! Вы уверены, что хотите продолжить?")) {
-            //     this.setState({
-            //         selectedGroupId: groupId,
-            //     });
-            // }
             this.setState({
                 tempGroupId: groupId,
                 isWarningOpen: true
@@ -84,40 +78,44 @@ class Form extends Component {
     renderForm() {
         // console.log("form state", this.state);
         return (
-            <div className="container">
+            <div className="container-fluid">
                 <ModalWarning isOpen={this.state.isWarningOpen} warningCallback={this.warningCallback}
                               warningToggle={this.warningToggle} warningMessage={this.state.warningMessage}/>
-                <div className="form">
-                    <div className="main-form">
-                        <form>
-                            <div className="form-group row">
-                                <label htmlFor="exampleMonth" className="label_month col-md-2">Месяц</label>
-                                <input
-                                    type="month"
-                                    className="form-control col-md-7"
-                                    id="exampleMonth"
-                                    aria-describedby="monthHelp"
-                                    placeholder="Введите месяц"
-                                    value={this.state.selectedMonth.toISOString().slice(0, 7)}
-                                    onChange={this.onDateChange}
-                                />
-                            </div>
-                            <div className="form-group row">
-                                <label htmlFor="customSelect" className="label_month col-md-2">Группа </label>
-                                <select className="custom-select form-control col-md-7"
-                                        onChange={this.onSelectGroup}
-                                        value={this.state.selectedGroupId || undefined}
-                                        id="customSelect">
-                                    <option value={undefined}>Выберите группу</option>
-                                    {this.props.groups.map(group => (
-                                        <option value={group.guid} key={group.guid}>{group.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </form>
+                {/*<div className="">*/}
+                {/*    <div className="">*/}
+                <form>
+                    <div className="form-group row">
+                        <label htmlFor="exampleMonth" className="col-form-label col-sm-4">Месяц</label>
+                        <div className="col-sm-8">
+                            <input
+                                type="month"
+                                className="form-control"
+                                id="exampleMonth"
+                                aria-describedby="monthHelp"
+                                placeholder="Введите месяц"
+                                value={this.state.selectedMonth.toISOString().slice(0, 7)}
+                                onChange={this.onDateChange}
+                            />
+                        </div>
                     </div>
-                </div>
+                    <div className="form-group row">
+                        <label htmlFor="customSelect" className="col-form-label col-sm-4">Группа </label>
+                        <div className="col-sm-8">
+                            <select className="custom-select form-control"
+                                    onChange={this.onSelectGroup}
+                                    value={this.state.selectedGroupId || undefined}
+                                    id="customSelect">
+                                <option value={undefined}>Выберите группу</option>
+                                {this.props.groups.map(group => (
+                                    <option value={group.guid} key={group.guid}>{group.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </form>
             </div>
+            // </div>
+            // </div>
         )
     }
 

@@ -104,30 +104,32 @@ class Schedule extends Component {
     getNewStartTime(value) {
         // if (this.props.schedule.isEdit) {
         console.log("value", value);
-        // console.log(this.state);
+        console.log(this.state);
         let element = this.state.htmlElement;
+        // console.log("includes??", element.className.includes("table-light"));
         let tempScheduleOfGroup = new Map(this.state.editedScheduleOfGroup);
         // if (element) {
         console.log(tempScheduleOfGroup);
-        switch (element.className) {
-            case "table-warning":
+        switch (true) {
+            case element.className.includes("table-warning"):
                 if (value.toDelete) {
-                    element.className = "table-light";
+                    element.className = "table-light cell";
                     tempScheduleOfGroup.delete(this.state.day);
                 } else {
                     tempScheduleOfGroup.set(this.state.day, value.newStartTime);
                 }
                 break;
-            case "table-info" :
+            case element.className.includes("table-info"):
                 if (value.toDelete) {
-                    element.className = "table-light";
+                    element.className = "table-light cell";
                     tempScheduleOfGroup.delete(this.state.day);
                 } else {
                     tempScheduleOfGroup.set(this.state.day, value.newStartTime);
                 }
                 break;
-            case "table-light":
-                element.className = "table-warning";
+            case element.className.includes("table-light"):
+                console.log("true GET IT");
+                element.className = "table-warning cell";
                 tempScheduleOfGroup.set(this.state.day, value.newStartTime);
                 break;
         }
@@ -198,11 +200,11 @@ class Schedule extends Component {
     render() {
         // console.log("render");
         console.log("this.state", this.state);
-        // console.log("this.props", this.props);
+        console.log("this.props", this.props);
         // console.log("this.props.children", this.props.children);
         return (
-            <div>
-                <div className="schedule">
+            <div className="container-fluid">
+                <div className="schedule row">
                     <ModalSetStartTime isOpen={this.state.isOpen}
                         // toggle={this.toggle}
                                        oldStartTime={this.state.oldStartTime}
@@ -210,16 +212,21 @@ class Schedule extends Component {
                                        toggleCallback={this.toggleCallback}
                                        getNewStartTime={this.getNewStartTime}
                                        toDelete={this.state.toDelete}/>
-                    <h3>Расписание</h3>
-                    <Form getSelectedGroupId={this.getSelectedGroupId} groups={this.props.group.groups}
-                          getSelectedDate={this.getSelectedDate} isEdit={this.props.schedule.isEdit}/>
-                    <EditSaveButtons
-                        isLoaded={this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth}
-                        isEdit={this.props.schedule.isEdit}
-                        onEdit={this.onEdit} onSave={this.onSave}/>
-                    {this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth ?
-                        <MonthlySchedule props={this.state} clickHandler={this.onClick}/> : null}
-
+                    <div className="main-container_large">
+                        <h3>Расписание</h3>
+                        <hr/>
+                        <Form getSelectedGroupId={this.getSelectedGroupId} groups={this.props.group.groups}
+                              getSelectedDate={this.getSelectedDate} isEdit={this.props.schedule.isEdit}/>
+                        <hr/>
+                        <div className="m-2">
+                            <EditSaveButtons
+                                isLoaded={this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth}
+                                isEdit={this.props.schedule.isEdit}
+                                onEdit={this.onEdit} onSave={this.onSave}/>
+                        </div>
+                        {this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth ?
+                            <MonthlySchedule props={this.state} clickHandler={this.onClick}/> : null}
+                    </div>
                 </div>
             </div>
         );

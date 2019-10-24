@@ -14,18 +14,48 @@ import {
 } from 'reactstrap';
 import {Link} from "react-router-dom";
 import '../../../css/NavMenu.css';
-
+import classNames from "classnames"
+// import
 
 export default class NavMenu extends Component {
     constructor(props) {
         super(props);
-
+        this.state = {
+            isOpen: false,
+            // fixed: "top",
+            visible: true,
+            prevScrollY: window.pageYOffset,
+        };
         this.toggle = this.toggle.bind(this);
         this.closeNavbar = this.closeNavbar.bind(this);
-        this.state = {
-            isOpen: false
-        };
+        this.handleScroll = this.handleScroll.bind(this);
     }
+
+    // Adds an event listener when the component is mount.
+    componentDidMount() {
+        window.addEventListener("scroll", this.handleScroll);
+    }
+
+    // Remove the event listener when the component is unmount.
+    componentWillUnmount() {
+        window.removeEventListener("scroll", this.handleScroll);
+    }
+
+    // Hide or show the menu.
+    handleScroll = () => {
+        const {prevScrollY} = this.state;
+
+        const currentScrollPos = window.pageYOffset;
+        const visible = prevScrollY > currentScrollPos;
+
+        // console.log("pageY", window.pageYOffset);
+        // console.log(prevScrollY);
+
+        this.setState({
+            prevScrollY: currentScrollPos + 0.6,
+            visible
+        });
+    };
 
     closeNavbar() {
         this.setState({
@@ -40,18 +70,21 @@ export default class NavMenu extends Component {
     }
 
     render() {
+        // const opacity = Math.min(100 / this.state.currentScrollHeight, 1)
+        const clsName = this.state.visible ? "active" : "hidden";
         return (
-            <header>
-                <Navbar className=" navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" light>
+            <header className="">
+                <Navbar fixed="top"
+                        className={"navbar-expand-md navbar-toggleable-md border-bottom box-shadow " + clsName}
+                        light>
                     <Container>
                         <NavbarBrand tag={Link} to="/">SMART JOURNAL</NavbarBrand>
                         <NavbarToggler onClick={this.toggle} className="mr-2"/>
-                        <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={this.state.isOpen} navbar>
+                        <Collapse className="d-md-inline-flex flex-md-row-reverse" isOpen={this.state.isOpen} navbar>
                             <ul className="navbar-nav flex-grow">
                                 <NavItem>
                                     <NavLink tag={Link} className="text-dark" to="/payment_management"
-                                             onClick={this.closeNavbar}>Управление
-                                        платежами</NavLink>
+                                             onClick={this.closeNavbar}>Посещаемость</NavLink>
                                 </NavItem>
                                 <NavItem>
                                     <NavLink tag={Link} className="text-dark" to="/statistics"

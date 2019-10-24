@@ -12,6 +12,8 @@ import ErrorBoundary from "./components and containres/containers/error boundary
 import ErrorRoute from "./components and containres/containers/error boundary/ErrorRoute";
 import Statistics from "./components and containres/containers/statistics/Statistics";
 
+//    color: rgba(248,249,250,0.33); - background
+
 export default () => (
     <ErrorBoundary>
         <Layout>

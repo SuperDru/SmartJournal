@@ -5,6 +5,7 @@ import {getScheduleSaga} from "./shedule";
 import {getAttendanceSaga} from "./attendance";
 import {getPaymentsSaga} from "./payments";
 import {getStatisticsSaga} from "./statistics";
+import {getAccountHistorySaga} from "./account history";
 
 export default function* rootSaga() {
     console.log('hello-from-root-saga!!!');
@@ -14,6 +15,7 @@ export default function* rootSaga() {
         getPaymentsSaga(),
         getGroupsSaga(),
         getUsersSaga(),
-        getStatisticsSaga()
+        getStatisticsSaga(),
+        getAccountHistorySaga()
     ])
 }

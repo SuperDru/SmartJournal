@@ -1,7 +1,6 @@
 import React, {Component} from "react"
 import {Button, Modal, ModalBody, ModalHeader, ModalFooter} from "reactstrap";
 
-
 class ModalWarning extends Component {
 
     constructor(props) {

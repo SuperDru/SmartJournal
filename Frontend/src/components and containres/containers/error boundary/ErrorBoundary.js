@@ -14,20 +14,22 @@ class ErrorBoundary extends Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
-        console.log("error boundary receive props", nextProps);
+        // console.log("error boundary receive props", nextProps);
         if (nextProps.group.error) {
             this.setState({
                 hasError: true,
                 error: nextProps.group.error,
                 // isModalOpen: true
             })
-        } else if (nextProps.user.error) {
-            this.setState({
-                hasError: true,
-                error: nextProps.user.error,
-                // isModalOpen: true
-            })
-        } else if (nextProps.schedule.error) {
+        }
+        // else if (nextProps.user.error) {
+        //     this.setState({
+        //         hasError: true,
+        //         error: nextProps.user.error,
+        //         // isModalOpen: true
+        //     })
+        // }
+        else if (nextProps.schedule.error) {
             this.setState({
                 hasError: true,
                 error: nextProps.schedule.error,
@@ -64,8 +66,8 @@ class ErrorBoundary extends Component {
     // }
 
     render() {
-        console.log("props", this.props);
-        console.log("error boundary", console.log(this.state));
+        // console.log("props", this.props);
+        // console.log("error boundary", console.log(this.state));
         return (
             <div>{
                 this.state.hasError ?

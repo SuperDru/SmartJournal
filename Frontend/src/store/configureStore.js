@@ -7,6 +7,7 @@ import {userReducer} from "./redux/users/reducer";
 import {paymentsReducer} from "./redux/payments/reducer";
 import {attendanceReducer} from "./redux/attendance/reducer";
 import {statisticsReducer} from "./redux/statistics/reducer";
+import {accountHistoryReducer} from "./redux/account history/reducer";
 import rootSaga from '../sagas/root-saga'
 
 export default function configureStore(history, initialState) {
@@ -16,7 +17,8 @@ export default function configureStore(history, initialState) {
         user: userReducer,
         attendance: attendanceReducer,
         payments: paymentsReducer,
-        statistics: statisticsReducer
+        statistics: statisticsReducer,
+        accountHistory: accountHistoryReducer
     };
 
     const sagaMiddleware = createSagaMiddleware();

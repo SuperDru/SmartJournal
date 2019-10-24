@@ -4,9 +4,39 @@
     width: 720px;
 }
 
-.Menu{
+.Menu {
     padding: 2rem;
     margin: 2rem;
     width: 10rem;
 }
 
+.main-container {
+    width: 90%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin: 0 auto 1rem;
+}
+
+.main-container__header {
+    margin: 0 auto 2rem 1rem;
+}
+
+.main-container_large {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    /*margin: auto 1rem auto auto;*/
+    margin-bottom: 1rem;
+    min-height: 100vh;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}

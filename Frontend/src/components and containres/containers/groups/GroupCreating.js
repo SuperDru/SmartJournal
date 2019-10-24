@@ -3,10 +3,11 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {userActionCreators} from "../../../store/redux/users/actionCreators";
 import {groupActionCreators} from "../../../store/redux/groups/actionCreators";
-import {GroupCreatingProfile} from "../../components/groups/GroupCreatingProfile";
 import {GroupCreatingWeekSchedule} from "../../components/groups/GroupCreatingWeekSchedule";
 import {GroupAddStudents} from "../../components/groups/GroupAddStudents";
 import Spinner from "../../components/other/Spinner";
+import GroupCreatingProfile from "../../components/groups/GroupCreatingProfile";
+import "../../../css/GroupCreating.css"
 
 class GroupCreating extends Component {
 
@@ -18,6 +19,8 @@ class GroupCreating extends Component {
             tempCbMap.set(i + "cb", false);
             tempStMap.set(i + "stForm", null);
         }
+        const groupDataFromSessionStorage = JSON.parse(sessionStorage.getItem("savedGroupData"));
+        console.log(groupDataFromSessionStorage);
         this.state = {
             checkboxes: tempCbMap,
             stInputs: tempStMap,
@@ -28,22 +31,47 @@ class GroupCreating extends Component {
                 cost: null,
                 days: [],
                 startTimes: []
-            }
+            },
+            name: groupDataFromSessionStorage ? groupDataFromSessionStorage.name : null,
+            duration: groupDataFromSessionStorage ? groupDataFromSessionStorage.duration : null,
+            cost: groupDataFromSessionStorage ? groupDataFromSessionStorage.cost : null,
+            costError: "Это поле обязательно",
+            durationError: "Это поле обязательно",
+            nameError: "Это поле обязательно",
         };
         this.onSaveGroup = this.onSaveGroup.bind(this);
         this.handleCheckboxesChange = this.handleCheckboxesChange.bind(this);
         this.handleUsersChange = this.handleUsersChange.bind(this);
-        this.handleInputChange = this.handleInputChange.bind(this);
         this.handleStartTimesInputsChange = this.handleStartTimesInputsChange.bind(this);
+        this.groupProfileCallback = this.groupProfileCallback.bind(this);
     }
 
     componentDidMount() {
         this.props.getAllUsers();
     }
 
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.name !== prevState.name
+            || this.state.duration !== prevState.duration
+            || this.state.cost !== prevState.cost) {
+            const savedGroupData = {
+                name: this.state.name,
+                cost: this.state.cost,
+                duration: this.state.duration,
+            };
+            sessionStorage.setItem("savedGroupData", JSON.stringify(savedGroupData));
+        }
+    }
+
     onSaveGroup() {
         let tempArr = [];
-        let data = Object.assign({}, this.state.data);
+        // let data = Object.assign({}, this.state.data);
+        let data = {
+            name: this.state.name,
+            cost: this.state.cost,
+            duration: this.state.duration
+        };
         this.state.checkboxes.forEach((v) => {
             tempArr.push(v);
         });
@@ -53,9 +81,14 @@ class GroupCreating extends Component {
             tempArr.push(v);
         });
         data.startTimes = tempArr;
-        console.log(data);
+        // console.log(data);
         this.props.createGroupSubmit(data);
         this.props.history.goBack();
+    }
+
+    groupProfileCallback(groupInfo) {
+        // console.log(groupInfo);
+        this.setState({name: groupInfo.name, cost: groupInfo.cost, duration: groupInfo.duration})
     }
 
     componentWillUnmount() {
@@ -64,39 +97,22 @@ class GroupCreating extends Component {
         this.state.chosenUsers.forEach((value, key) => {
             data.push(key);
         });
-        this.props.addUsersToGroup(data)
+        if (data.length) {
+            this.props.addUsersToGroup(data)
+        }
+        // sessionStorage.removeItem("savedGroupData");
+
+        // const savedGroupData = {
+        //     name: this.state.name,
+        //     cost: this.state.cost,
+        //     duration: this.state.duration,
+        // };
+        // sessionStorage.setItem("savedGroupData", JSON.stringify(savedGroupData));
         // this.props.addUsersToGroupSubmit(this.props.newGroup.guid, data);
     }
 
     handleCheckboxesChange(e) {
         this.setState({checkboxes: this.state.checkboxes.set(e.target.id, e.target.checked)});
-    }
-
-    handleInputChange(e) {
-
-        // console.log(e.target);
-        let temp = Object.assign({}, this.state.data);
-        switch (e.target.id) {
-            case 'groupName':
-                temp.name = e.target.value;
-                // this.setState({data: this.state.})
-                break;
-            case 'cost':
-                temp.cost = e.target.value;
-                // this.setState({surname: e.target.value});
-                break;
-            case 'duration':
-                temp.duration = e.target.value;
-                // this.setState({patronymic: e.target.value});
-                break;
-            // case "email-input":
-            //     this.setState({email: e.target.value});
-            //     break;
-            // case "tel-input":
-            //     this.setState({phoneNumber: e.target.value});
-            //     break;
-        }
-        this.setState({data: temp});
     }
 
     handleStartTimesInputsChange(e) {
@@ -120,26 +136,39 @@ class GroupCreating extends Component {
     }
 
     render() {
-        // console.log("this.state", this.state);
+        console.log("this.state", this.state);
+        // console.log("ls", sessionStorage.getItem("savedGroupData"));
         return (<div className="container-fluid">
-                <h4>Создание группы</h4>
-                <GroupCreatingProfile handleInputChange={this.handleInputChange}/>
-                <label
-                    htmlFor="example-text-input"
-                    className="col-xs-2 col-form-label"> Расписание :</label>
-                <GroupCreatingWeekSchedule props={this.state} handleCheckboxesChange={this.handleCheckboxesChange}
-                                           handleStartTimesInputsChange={this.handleStartTimesInputsChange}/>
-                <div>
-                    {this.props.user.users ? <div>
-                        <h5>Добавьте студентов в группу:</h5>
-                        <GroupAddStudents users={this.props.user.users}
-                                          handleUsersChange={this.handleUsersChange}/>
-                    </div> : <Spinner/>}
-                </div>
-                <div>
-                    <button className='btn btn-success'
-                            onClick={this.onSaveGroup}>Сохранить
-                    </button>
+                <div className="row justify-content-center">
+                    <div className="main-container">
+                        <h4 className="main-container__header">Создание группы</h4>
+                        <hr/>
+                        <h6 className="col-xs-2 col-form-label">Основная информация :</h6>
+                        <GroupCreatingProfile groupProfileCallback={this.groupProfileCallback} groupById={{
+                            name: this.state.name,
+                            duration: this.state.duration,
+                            cost: this.state.cost
+                        }}/>
+                        <hr/>
+                        <h6 className="col-xs-2 col-form-label"> Расписание :</h6>
+                        <GroupCreatingWeekSchedule props={this.state}
+                                                   handleCheckboxesChange={this.handleCheckboxesChange}
+                                                   handleStartTimesInputsChange={this.handleStartTimesInputsChange}/>
+                        <hr/>
+                        <div>
+                            {this.props.user.users ? <div>
+                                <h6>Добавьте студентов в группу:</h6>
+                                <div className="ml-4">
+                                    <GroupAddStudents users={this.props.user.users}
+                                                      handleUsersChange={this.handleUsersChange}/></div>
+                            </div> : <Spinner/>}
+                        </div>
+                        <div className="ml-0 m-3">
+                            <button className='btn btn-success'
+                                    onClick={this.onSaveGroup}>Сохранить
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         )

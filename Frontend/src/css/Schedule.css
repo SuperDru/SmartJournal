@@ -1,44 +1,49 @@
 
-.schedule__true-schedule {
-    display: flex;
-    text-align: center;
-    justify-content: center;
-}
-
-.table {
-    max-width: 1000px;
-}
-
-.table th, .table td {
-    min-width: 150px;
-    height: 50px;
-
-}
-
-.cell {
-}
-
-.editing-cell {
-    width: 50px;
-    height: 50px;
-}
-
-.editing-cell:hover {
-    background-color: rgba(144, 147, 150, 0.6);
-}
-
-.selected-cell {
-    background-color: gray;
-    /*color: white;*/
-}
-
 .opacity-cell {
     opacity: .4;
 }
 
-.main-form {
-    max-width: 30rem;
+.cell {
+    width: 5rem;
+    height: 5rem;
 }
+
+/*.schedule__true-schedule {*/
+/*    display: flex;*/
+/*    text-align: center;*/
+/*    justify-content: center;*/
+/*}*/
+
+/*.table {*/
+/*    max-width: 1000px;*/
+/*}*/
+
+/*.table th, .table td {*/
+/*    min-width: 150px;*/
+/*    height: 50px;*/
+
+/*}*/
+
+/*.cell {*/
+/*}*/
+
+/*.editing-cell {*/
+/*    width: 50px;*/
+/*    height: 50px;*/
+/*}*/
+
+/*.editing-cell:hover {*/
+/*    background-color: rgba(144, 147, 150, 0.6);*/
+/*}*/
+
+/*.selected-cell {*/
+/*    background-color: gray;*/
+/*    !*color: white;*!*/
+/*}*/
+
+/*.main-form {*/
+/*    max-width: 30rem;*/
+/*}*/
 
 /*.form {*/
 /*    display: flex;*/
@@ -46,14 +51,6 @@
 /*    flex-wrap: wrap;*/
 /*    height: 100%;*/
 /*}*/
-.form-group {
-    display: flex;
-    justify-content: space-between;
-}
-
-.label_month {
-
-}
 
 /*.editing-cell:focus{*/
 /*    background-color: aqua;*/

@@ -157,24 +157,26 @@ class AttendanceAndPayments extends Component {
             let content;
             let isAttended;
             switch (e.target.className) {
-                case "cell":
+                case "att_cell":
                     e.target.className = "cell_attended";
                     newClassname = "table-primary";
                     content = "Б";
                     isAttended = true;
                     break;
                 case "cell_attended":
-                    e.target.className = "cell_absent";
-                    newClassname = "table-secondary";
-                    content = "Н";
-                    isAttended = false;
-                    break;
-                case "cell_absent":
-                    e.target.className = "cell";
+                    e.target.className = "att_cell";
+                    // newClassname = "table-secondary";
                     newClassname = "table-default";
                     content = null;
-                    isAttended = null;
+                    // content = "Н";
+                    isAttended = false;
                     break;
+                // case "cell_absent":
+                //     e.target.className = "cell";
+                //     newClassname = "table-default";
+                //     content = null;
+                //     isAttended = null;
+                //     break;
             }
             this.props.group.usersFromGroup.forEach(value => {
                 let elem = document.getElementById(value.guid + key + "cell");
@@ -198,24 +200,6 @@ class AttendanceAndPayments extends Component {
                 mapAttendance.set(value.guid, tempNewAttendance);
                 // console.log(mapAttendance);
                 this.setState({newAttendance: mapAttendance});
-                // let elem = document.getElementById(value.guid + key + "cell");
-                // switch (elem.className) {
-                //     case "table-default":
-                //         elem.className = "table-primary";
-                //         elem.innerHTML = "Б";
-                //         attendance.isAttended = true;
-                //         break;
-                //     case "table-primary":
-                //         elem.className = "table-secondary";
-                //         elem.innerHTML = "Н";
-                //         attendance.isAttended = false;
-                //         break;
-                //     case "table-secondary":
-                //         elem.className = "table-default";
-                //         elem.innerHTML = null;
-                //         break;
-                // }
-
             })
         }
     }
@@ -236,13 +220,6 @@ class AttendanceAndPayments extends Component {
 
     addPayment(userId) {
         this.setState({isPaymentModalOpen: true, userId: userId});
-        // let amount = window.prompt("Введите сумму платежа в рублях");
-        // if (amount) {
-        //     this.props.addPayment(userId, {
-        //         amount: amount,
-        //         payday: new Date().toISOString()
-        //     });
-        // }
     }
 
     clickAttendanceHandler(userId, key, e) {
@@ -265,19 +242,18 @@ class AttendanceAndPayments extends Component {
             // e.target.userSelect="none";
             console.log(e.target);
             switch (e.target.className) {
+                case "table-secondary":
                 case "table-default":
                     e.target.className = "table-primary";
                     e.target.innerHTML = "Б";
                     attendance.isAttended = true;
                     break;
                 case "table-primary":
-                    e.target.className = "table-secondary";
-                    e.target.innerHTML = "Н";
-                    attendance.isAttended = false;
-                    break;
-                case "table-secondary":
+                    // e.target.className = "table-secondary";
                     e.target.className = "table-default";
                     e.target.innerHTML = null;
+                    // e.target.innerHTML = "Н";
+                    attendance.isAttended = false;
                     break;
             }
             if (tempNewAttendance.indexOf(attendance) === -1) {
@@ -292,31 +268,41 @@ class AttendanceAndPayments extends Component {
     render() {
         console.log("this.state", this.state);
         // console.log("this.props", this.props);
-        return (<div>
-                <ModalAddPayment isOpen={this.state.isPaymentModalOpen}
-                                 paymentModalCallback={this.paymentModalCallback}
-                                 paymentModalToggle={this.paymentModalToggle}/>
-                <h3>Управление платежами</h3>
-                <Form getSelectedGroupId={this.getSelectedGroupId} getSelectedDate={this.getSelectedDate}
-                      groups={this.props.group.groups} isEdit={this.props.attendance.isEdit}/>
-                <EditSaveButtons
-                    isLoaded={this.props.attendance.isLoaded && this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth}
-                    isEdit={this.props.attendance.isEdit}
-                    onEdit={this.onEdit} onSave={this.onSave}/>
-                <div>{this.state.groupsMap.size && this.state.selectedGroupId ?
-                    <div>
-                        <h6>Цена за одно занятие:</h6>
-                        <p>{this.state.groupsMap.get(this.state.selectedGroupId).cost} руб.</p>
-                    </div> : null}
-                </div>
-                {this.props.attendance.isLoaded && this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth ?
-                    <AttendanceAndPaymentsTable props={this.state}
-                                                onClickHead={this.clickAttendanceHeadHandler}
-                                                onClickBody={this.clickAttendanceHandler}
-                                                onAddPayment={this.addPayment}
-                                                isAttendanceEdit={this.props.attendance.isEdit}
-                                                usersFromGroup={this.props.group.usersFromGroup}/> : null}
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                    <ModalAddPayment isOpen={this.state.isPaymentModalOpen}
+                                     paymentModalCallback={this.paymentModalCallback}
+                                     paymentModalToggle={this.paymentModalToggle}/>
+                    <div className="main-container_large">
+                        <h3>Посещаемость</h3>
+                        <hr/>
+                        <Form getSelectedGroupId={this.getSelectedGroupId} getSelectedDate={this.getSelectedDate}
+                              groups={this.props.group.groups} isEdit={this.props.attendance.isEdit}/>
+                        <hr/>
+                        <div>{this.state.groupsMap.size && this.state.selectedGroupId ?
+                            <div>
+                                <h6>Цена за одно занятие:</h6>
+                                <p>{this.state.groupsMap.get(this.state.selectedGroupId).cost} руб.</p>
+                                <hr/>
+                            </div> : null}
+                        </div>
+                        <div className="mb-2">
+                            <EditSaveButtons
+                                isLoaded={this.props.attendance.isLoaded && this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth}
+                                isEdit={this.props.attendance.isEdit}
+                                onEdit={this.onEdit} onSave={this.onSave}/>
+                        </div>
+                        {this.props.attendance.isLoaded && this.props.schedule.isLoaded && this.state.selectedGroupId && this.state.selectedMonth ?
+                            <AttendanceAndPaymentsTable props={this.state}
+                                                        onClickHead={this.clickAttendanceHeadHandler}
+                                                        onClickBody={this.clickAttendanceHandler}
+                                                        onAddPayment={this.addPayment}
+                                                        isAttendanceEdit={this.props.attendance.isEdit}
+                                                        usersFromGroup={this.props.group.usersFromGroup}/> : null}
 
+                    </div>
+                </div>
             </div>
         )
     }
@@ -333,5 +319,4 @@ export default connect(
     },
     dispatch => bindActionCreators(Object.assign({}, groupActionCreators,
         scheduleActionCreators, attendanceActionCreators, paymentsActionCreators), dispatch)
-)
-(AttendanceAndPayments)
+)(AttendanceAndPayments)
