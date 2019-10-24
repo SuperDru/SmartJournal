@@ -1,0 +1,12 @@
+.group-creating {
+    width: 90%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin: 1rem auto;
+}
+
+.group-creating__header {
+    margin: 0 auto 2rem 1rem;
+}
