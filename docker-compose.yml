@@ -1,24 +1,12 @@
 version: '3'
 
 services:
-    postgres:
-        container_name: 'postgres'
-        image: postgres:latest
-        restart: always
-        ports:
-          - "5430:5432"
-        environment:
-            POSTGRES_DB: smart_journal
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: mydb
     students-system:
         container_name: 'students-system'
         image: students-system
         build:
           context: ./
           dockerfile: Dockerfile
-        depends_on:
-          - postgres
         ports:
           - "8200:80"
     frontend:
@@ -28,7 +16,6 @@ services:
           context: ./Frontend
           dockerfile: Dockerfile
         depends_on:
-          - postgres
           - students-system
         ports:
           - "8100:80"
@@ -39,7 +26,6 @@ services:
           context: ./
           dockerfile: Nginx.Dockerfile
         depends_on:
-          - postgres
           - students-system
           - frontend
         ports:

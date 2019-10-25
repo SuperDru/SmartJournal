@@ -18,6 +18,10 @@
       <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="logs" />
+    </ItemGroup>
+
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <DocumentationFile>bin\Debug\netcoreapp2.2\PowerBiApiService.xml</DocumentationFile>
         <NoWarn>1701;1702;1591</NoWarn>

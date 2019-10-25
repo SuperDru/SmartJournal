@@ -1,12 +1,21 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Common
 {
     public class ApiExceptionFilter: IExceptionFilter
     {
+        private readonly ILogger _logger;
+        
+        public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger)
+        {
+            _logger = logger;
+        }
+        
         public void OnException(ExceptionContext context)
         {
             var ex = context.Exception;
@@ -29,7 +38,7 @@ namespace Common
                 StatusCode = StatusCodes.Status500InternalServerError
             };
             
-            Log.Error(ex.StackTrace);
+            _logger.LogError(ex.StackTrace);
         }
     }
 

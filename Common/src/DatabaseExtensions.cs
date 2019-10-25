@@ -21,7 +21,11 @@ namespace Common
             host.ConfigureServices((context, services) =>
             {
                 services.AddEntityFrameworkNpgsql();
-                services.AddDbContext<DatabaseContext>((p, o) => o.UseNpgsql(context.Configuration["ConnectionString"]));
+                services.AddDbContext<DatabaseContext>((p, o) =>
+                {
+                    o.UseNpgsql(context.Configuration["ConnectionString"]);
+                    o.EnableSensitiveDataLogging();
+                });
                 services.AddScoped<ICacheRepository, CacheRepository>();
                 services.AddSingleton<DatabaseCache>();
             });

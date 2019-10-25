@@ -1,0 +1,11 @@
+services:
+    postgres:
+        container_name: 'postgres'
+        image: postgres:latest
+        restart: always
+        ports:
+          - "5430:5432"
+        environment:
+            POSTGRES_DB: smart_journal
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: mydb

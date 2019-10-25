@@ -4,6 +4,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Common;
+using Microsoft.Extensions.Logging;
 
 namespace StudentsSystem
 {
@@ -14,9 +15,10 @@ namespace StudentsSystem
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        private static IWebHostBuilder CreateWebHostBuilder(string[] args) => 
+        private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .AddDatabase()
+                .AddLogging()
                 .UseStartup<StudentsSystemStartup>();
     }
 }

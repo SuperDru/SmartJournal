@@ -15,6 +15,7 @@ namespace Common
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) => 
             WebHost.CreateDefaultBuilder(args)
                 .AddDatabase()
+                .AddLogging()
                 .UseStartup<CommonStartup>();
     }
 }
