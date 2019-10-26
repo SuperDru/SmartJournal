@@ -1,9 +1,5 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 
@@ -16,12 +12,29 @@ namespace Common
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(LogEventLevel.Information)
+                .WriteTo.Logger(l =>
+                {
+                    l.WriteTo.Console(LogEventLevel.Information);
+                    l.Filter.ByIncludingOnly(ExcludeDatabaseInformation);
+                })
+                .WriteTo.Logger(l =>
+                {
+                    l.WriteTo.File("logs/info.log", LogEventLevel.Information);
+                    l.Filter.ByIncludingOnly(ExcludeDatabaseInformation);
+                })
                 .WriteTo.File("logs/debug.log", LogEventLevel.Debug)
-                .WriteTo.File("logs/info.log", LogEventLevel.Information)
                 .CreateLogger();
             
             return host.UseSerilog();
+        }
+
+        private static bool ExcludeDatabaseInformation(LogEvent e)
+        {
+            var source = e.Properties["SourceContext"];
+            var str = new StringWriter();
+            source.Render(str);
+
+            return str.ToString().Replace("\"", "") != "Microsoft.EntityFrameworkCore.Database.Command";
         }
     }
 }
