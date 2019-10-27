@@ -5,34 +5,49 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Common;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace StudentsSystem
 {
-    /// <inheritdoc />
     [Route("/users")]
     public class UsersController: Controller
     {
         private readonly ICacheRepository _cache;
+        private readonly ILogger<UsersController> _logger;
 
         /// <inheritdoc />
-        public UsersController(ICacheRepository cache)
+        public UsersController(ICacheRepository cache, ILogger<UsersController> logger)
         {
             _cache = cache;
+            _logger = logger;
         }
-        
+
         /// <summary>
         /// Returns user with {userId}
         /// </summary>
         [HttpGet("{userId:Guid}")]
-        public UserResponse GetUser([FromRoute] Guid userId) =>
-            _cache.GetExistingUser(userId).ToUserResponse();
+        public UserResponse GetUser([FromRoute] Guid userId)
+        {
+            var user = _cache.GetExistingUser(userId).ToUserResponse();
+
+            _logger.LogInformation("Return user with id {id}", user.Guid);
+            
+            return user;
+        }
 
         /// <summary>
         /// Returns list of users
         /// </summary>
         [HttpGet]
-        public ICollection<UserResponse> GetUsers() =>
-            _cache.GetUsers().Select(x => x.ToUserResponse()).ToList();
+        public ICollection<UserResponse> GetUsers()
+        {
+            var users = _cache.GetUsers().Select(x => x.ToUserResponse()).ToList();
+
+            _logger.LogInformation("Return all users");
+            
+            return users;
+        }
 
         /// <summary>
         /// Creates new user. 
@@ -49,7 +64,12 @@ namespace StudentsSystem
             if (_cache.GetUsers().Any(x => x.PhoneNumber == user.PhoneNumber))
                 Errors.UserWithThisPhoneExistsError.Throw(StatusCodes.Status403Forbidden);
             
+            _logger.LogInformation("Creating user, id = {id}, first name = {first}, second name = {second}, patronymic = {patronymic}, email = {email}, phone number = {number}",
+                user.Guid, user.Name, user.Surname, user.Patronymic, user.Email, user.PhoneNumber);
+            
             await _cache.AddUser(user);
+            
+            _logger.LogInformation("Created user with id {id}", user.Guid);
             
             return _cache.GetUser(user.Guid).ToUserResponse();
         }
@@ -68,8 +88,15 @@ namespace StudentsSystem
             
             if (user.PhoneNumber != request.PhoneNumber && _cache.GetUsers().Any(x => x.PhoneNumber == request.PhoneNumber))
                 Errors.UserWithThisPhoneExistsError.Throw(StatusCodes.Status403Forbidden);
+
+            var newUser = request.ToUser(user);
             
-            await _cache.AddOrUpdateUser(request.ToUser(user));
+            _logger.LogInformation("Updating user, id = {id}, first name = {first}, second name = {second}, patronymic = {patronymic}, email = {email}, phone number = {number}",
+                user.Guid, user.Name, user.Surname, user.Patronymic, user.Email, user.PhoneNumber);
+            
+            await _cache.AddOrUpdateUser(newUser);
+            
+            _logger.LogInformation("Updated user with id {id}", user.Guid);
             
             return _cache.GetUser(user.Guid).ToUserResponse();
         }
@@ -82,7 +109,12 @@ namespace StudentsSystem
         {
             // Check that user exists
             _cache.GetExistingUser(userId);
+            
+            _logger.LogInformation("Removing user with id {id}", userId);
+            
             await _cache.RemoveUser(userId);
+            
+            _logger.LogInformation("Removed user with id {id}", userId);
         }
 
         /// <summary>
@@ -99,6 +131,8 @@ namespace StudentsSystem
             if (request.UserId != null && request.UserIds == null)
                 request.UserIds = new List<Guid> {request.UserId.Value};
             
+            _logger.LogInformation("Assigning users to group with id {id}", group.Guid);
+            
             // ReSharper disable once PossibleNullReferenceException
             foreach (var userId in request.UserIds)
             {
@@ -106,6 +140,8 @@ namespace StudentsSystem
             
                 if (user.Groups.Any(x => x.GroupId == group.Id && x.UserId == user.Id))
                     Errors.UserAlreadyAssignedToGroupError(user).Throw(StatusCodes.Status403Forbidden);
+                
+                _logger.LogInformation("Assigning user with id {userId} to group with id {groupId}", user.Guid, group.Guid);
                 
                 group.Users.Add(new UserGroup
                 {
@@ -116,10 +152,11 @@ namespace StudentsSystem
             try
             {
                 await _cache.UpdateGroups();
+                _logger.LogInformation("Assigned users to group with id {id}", group.Guid);
             }
             catch (Exception)
             {
-                // ignored
+                _logger.LogInformation("What the hell exception");
             }
         }
 
@@ -137,6 +174,8 @@ namespace StudentsSystem
             if (request.UserId != null && request.UserIds == null)
                 request.UserIds = new List<Guid> {request.UserId.Value};
             
+            _logger.LogInformation("Removing users from group with id {id}", group.Guid);
+
             // ReSharper disable once PossibleNullReferenceException
             foreach (var userId in request.UserIds)
             {
@@ -145,10 +184,14 @@ namespace StudentsSystem
                 if (user.Groups.All(x => !(x.GroupId == group.Id && x.UserId == user.Id)))
                     Errors.UserAlreadyRemovedFromGroupError(user).Throw(StatusCodes.Status403Forbidden);
                 
+                _logger.LogInformation("Removing user with id {userId} from group with id {groupId}", user.Guid, group.Guid);
+
                 user.Groups.RemoveAll(x => x.GroupId == group.Id && x.UserId == user.Id); 
             }
             
             await _cache.UpdateUsers();
+            
+            _logger.LogInformation("Removed users from group with id {id}", group.Guid);
         }
     }
 }

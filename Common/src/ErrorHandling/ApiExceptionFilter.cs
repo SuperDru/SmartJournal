@@ -9,7 +9,7 @@ namespace Common
 {
     public class ApiExceptionFilter: IExceptionFilter
     {
-        private readonly ILogger _logger;
+        private ILogger<ApiExceptionFilter> _logger;
         
         public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger)
         {
@@ -28,7 +28,7 @@ namespace Common
                     StatusCode = apiException.StatusCode
                 };
 
-                Log.Information($"Error: {error}");
+                _logger.LogInformation($"Error: {error}");
 
                 return;
             }

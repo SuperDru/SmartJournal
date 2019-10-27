@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace StudentsSystem
 {
@@ -12,10 +15,12 @@ namespace StudentsSystem
         private const int ShiftCount = 20;
 
         private readonly ICacheRepository _cache;
+        private readonly ILogger<AccountHistoryController> _logger;
 
-        public AccountHistoryController(ICacheRepository cache)
+        public AccountHistoryController(ICacheRepository cache, ILogger<AccountHistoryController> logger)
         {
             _cache = cache;
+            _logger = logger;
         }
 
         /// <summary>
@@ -25,6 +30,9 @@ namespace StudentsSystem
         public ICollection<AccountHistoryResponse> GetAccountHistory([FromRoute] Guid userId, [FromRoute] int step)
         {
             var user = _cache.GetExistingUser(userId);
+            
+            _logger.LogInformation("Return account history of user with id {userId}, step = {step}", userId, step);
+            
             return user.AccountHistory
                 .OrderByDescending(x => x.PerformedAt)
                 .Skip(step * ShiftCount)
@@ -40,6 +48,9 @@ namespace StudentsSystem
         public ICollection<AccountHistoryResponse> GetAccountHistory([FromRoute] Guid userId, [FromQuery] DateTime from, [FromQuery] DateTime to)
         {
             var user = _cache.GetExistingUser(userId);
+            
+            _logger.LogInformation("Return account history of user with id {userId} from {from} to {to} date", userId, from, to);
+            
             return user.AccountHistory
                 .OrderByDescending(x => x.PerformedAt)
                 .Where(x => x.PerformedAt >= from && x.PerformedAt <= to)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Common;
+using Microsoft.Extensions.Logging;
 
 namespace StudentsSystem
 {
@@ -11,17 +12,19 @@ namespace StudentsSystem
     {
         ICollection<AttendanceResponse> GetAttendance(Guid groupId, DateTime from, DateTime to);
         Task UpdateAttendance(Guid groupId, ICollection<AttendanceRequest> newAttendance);
-        Task Transform(IDictionary<int, float> deptChanges);
+        Task TransformAmountToAttendance(IDictionary<int, float> deptChanges);
     }
     
     public class AttendanceService: IAttendanceService
     {
         private readonly ICacheRepository _cache;
         private readonly IAccountManagementService _account;
+        private readonly ILogger<AttendanceService> _logger;
 
-        public AttendanceService(ICacheRepository cache, IAccountManagementService account)
+        public AttendanceService(ICacheRepository cache, IAccountManagementService account, ILogger<AttendanceService> logger)
         {
             _cache = cache;
+            _logger = logger;
             _account = account;
         }
         
@@ -76,6 +79,7 @@ namespace StudentsSystem
                             PaymentAmount = -group.Cost
                         });
                         deptChanges[user.Id] = deptChanges.ContainsKey(user.Id) ? deptChanges[user.Id] + group.Cost : group.Cost;
+                        _logger.LogInformation("Adding day {date}", newDay.Date);
                     }
                     else if (oldDay != null && !newDay.IsAttended)
                     {
@@ -86,16 +90,18 @@ namespace StudentsSystem
                             oldDay.PaymentAmount = 0;
                         }
                         deptChanges[user.Id] = deptChanges.ContainsKey(user.Id) ? deptChanges[user.Id] + oldDay.PaymentAmount : oldDay.PaymentAmount;
+                        _logger.LogInformation("Removing day {date}", newDay.Date);
                     }
                 }
             }
 
             await _cache.AddOrUpdateGroup(group);
-            await _cache.Transform(deptChanges);
-            await Transform(await _account.Notify(deptChanges.Keys));
+            _logger.LogInformation("Updated attendance in database");
+            await _cache.Transform(deptChanges, _logger);
+            await TransformAmountToAttendance(await _account.Notify(deptChanges.Keys, _logger));
         }
 
-        public async Task Transform(IDictionary<int, float> deptChanges)
+        public async Task TransformAmountToAttendance(IDictionary<int, float> deptChanges)
         {
             foreach (var (userId, amount) in deptChanges.ToArray())
             {
@@ -107,6 +113,7 @@ namespace StudentsSystem
                 var firstNotPaid = att.FirstOrDefault(x => x.PaymentAmount <= 0);
                 foreach (var x in att.Where(x => x.Date > firstNotPaid?.Date && x.PaymentAmount > 0))
                 {
+                    _logger.LogInformation("Cancel payment for attendance: date = {date}, amount = {amount} (for ordering purposes)", x.Date, x.PaymentAmount);
                     curAmount += x.PaymentAmount;
                     x.PaymentAmount = -x.PaymentAmount;
                 }
@@ -120,6 +127,7 @@ namespace StudentsSystem
                         day.PaymentAmount = -day.PaymentAmount;
                         curAmount -= day.PaymentAmount;
                     }
+                    _logger.LogInformation("Payment for attendance: date = {date}, amount = {amount}", day.Date, day.PaymentAmount);
                 }
 
                 if (curAmount > 0)
@@ -128,7 +136,7 @@ namespace StudentsSystem
                 deptChanges[userId] = curAmount;
             }
             
-            await _cache.Transform(deptChanges);
+            await _cache.Transform(deptChanges, _logger);
         }
     }
 }

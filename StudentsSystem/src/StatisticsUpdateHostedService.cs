@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace StudentsSystem
@@ -10,11 +11,14 @@ namespace StudentsSystem
     {
         private Timer _timer;
         private bool _toUpdate = true;
+        
         private readonly IStatisticsCalculationService _statisticsCalculation;
+        private readonly ILogger<StatisticsUpdateHostedService> _logger;
 
-        public StatisticsUpdateHostedService(IStatisticsCalculationService statisticsCalculation)
+        public StatisticsUpdateHostedService(IStatisticsCalculationService statisticsCalculation, ILogger<StatisticsUpdateHostedService> logger)
         {
             _statisticsCalculation = statisticsCalculation;
+            _logger = logger;
         }
 
         private void UpdateStatistics(object state)
@@ -28,11 +32,13 @@ namespace StudentsSystem
             var lastMonth = DateTime.Today.AddMonths(-1);
             _statisticsCalculation.BuildStatistics(lastMonth);
             
-            Log.Information($"Statistics updated, time: {DateTime.Now}");
+            _logger.LogInformation($"Statistics updated, time: {DateTime.Now}");
         }
         
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Statistics hosted service started");
+
             _timer = new Timer(UpdateStatistics, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
             
             return Task.CompletedTask;
@@ -42,6 +48,7 @@ namespace StudentsSystem
         {
             _timer?.Change(Timeout.Infinite, 0);
 
+            _logger.LogInformation("Statistics hosted service stopped");
             return Task.CompletedTask;
         }
 

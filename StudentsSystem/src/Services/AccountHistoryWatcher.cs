@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.Logging;
 
 namespace StudentsSystem
 {
@@ -16,11 +17,13 @@ namespace StudentsSystem
     {
         private readonly ICacheRepository _cache;
         private readonly IDictionary<int, float> _startAmounts;
+        private readonly ILogger<AccountHistoryWatcher> _logger;
         private OperationType _type;
 
-        public AccountHistoryWatcher(ICacheRepository cache)
+        public AccountHistoryWatcher(ICacheRepository cache, ILogger<AccountHistoryWatcher> logger)
         {
             _cache = cache;
+            _logger = logger;
             _startAmounts = new Dictionary<int, float>();
         }
         
@@ -30,6 +33,8 @@ namespace StudentsSystem
             
             var users = _cache.GetUsers().Where(x => userIds.Contains(x.Guid));
 
+            _logger.LogInformation("Start to track accounts changes, operation type = {type}", type.ToString());
+            
             foreach (var user in users)
             {
                 var amount = user.Account.Amount;
@@ -45,6 +50,8 @@ namespace StudentsSystem
         {
             var date = DateTime.Now;
             
+            _logger.LogInformation("Stopping to track accounts changes, operation type = {type}", _type.ToString());
+
             foreach (var id in _startAmounts.Keys)
             {
                 var user = _cache.GetUser(id);
@@ -68,6 +75,8 @@ namespace StudentsSystem
             }
 
             await _cache.UpdateUsers();
+            
+            _logger.LogInformation("Stopped to track accounts changes, operation type = {type}", _type.ToString());
         }
     }
 }

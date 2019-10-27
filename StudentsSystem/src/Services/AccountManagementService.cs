@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Common;
+using Microsoft.Extensions.Logging;
 
 namespace StudentsSystem
 {
@@ -13,10 +14,12 @@ namespace StudentsSystem
     public class AccountManagementService: IAccountManagementService
     {
         private readonly ICacheRepository _cache;
+        private readonly ILogger<AccountManagementService> _logger;
 
-        public AccountManagementService(ICacheRepository cache)
+        public AccountManagementService(ICacheRepository cache, ILogger<AccountManagementService> logger)
         {
             _cache = cache;
+            _logger = logger;
         }
 
 
@@ -34,6 +37,8 @@ namespace StudentsSystem
             user.Account.UpdatedAt = DateTime.Now;
             
             await _cache.AddOrUpdateUser(user);
+            
+            _logger.LogInformation("Deposit: user with id {id}, amount = {amount}", userId, amount);
         }
 
         public async Task<float> PayDeptOff(int userId)

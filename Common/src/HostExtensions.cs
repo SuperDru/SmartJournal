@@ -15,12 +15,12 @@ namespace Common
                 .WriteTo.Logger(l =>
                 {
                     l.WriteTo.Console(LogEventLevel.Information);
-                    l.Filter.ByIncludingOnly(ExcludeDatabaseInformation);
+                    l.Filter.ByExcluding(ExcludeDatabaseInformation);
                 })
                 .WriteTo.Logger(l =>
                 {
                     l.WriteTo.File("logs/info.log", LogEventLevel.Information);
-                    l.Filter.ByIncludingOnly(ExcludeDatabaseInformation);
+                    l.Filter.ByExcluding(ExcludeDatabaseInformation);
                 })
                 .WriteTo.File("logs/debug.log", LogEventLevel.Debug)
                 .CreateLogger();
@@ -34,7 +34,7 @@ namespace Common
             var str = new StringWriter();
             source.Render(str);
 
-            return str.ToString().Replace("\"", "") != "Microsoft.EntityFrameworkCore.Database.Command";
+            return e.MessageTemplate.Text.Contains("DbCommand");
         }
     }
 }
